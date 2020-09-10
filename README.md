@@ -1,0 +1,2 @@
+# metarbmq
+RabbitMQ Extension
