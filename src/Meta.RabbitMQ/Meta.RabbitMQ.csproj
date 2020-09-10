@@ -6,12 +6,12 @@
     <Company>leisaupei@163.com</Company>
     <Copyright>MIT</Copyright>
     <Description>.net standard 2.0 RabbitMQ中间件, 支持多个RabbitMQ Server</Description>
-    <PackageProjectUrl>https://github.com/leisaupei/metarbmq</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/leisaupei/metarbmq</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/leisaupei/metarabbitmq</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/leisaupei/metarabbitmq</RepositoryUrl>
     <PackageReleaseNotes>初始化开源项目</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://github.com/leisaupei/metarbmq/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/leisaupei/metarabbitmq/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
