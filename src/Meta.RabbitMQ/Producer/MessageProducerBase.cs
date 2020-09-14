@@ -15,16 +15,14 @@ namespace Meta.RabbitMQ.Producer
 	public abstract class MessageProducerBase
 	{
 		protected readonly IMessageProducer _messageProducer;
-		protected readonly ISerializer _serializer;
 
 		/// <summary>
 		/// 如果使用<see cref="IConnectionChannelPoolCollection"/>注入, 此项需要override
 		/// </summary>
 		protected virtual string Name { get; } = string.Empty;
-		protected MessageProducerBase(IMessageProducer messageProducer, ISerializer serializer)
+		protected MessageProducerBase(IMessageProducer messageProducer)
 		{
 			_messageProducer = messageProducer;
-			_serializer = serializer;
 		}
 		/// <summary>
 		/// 发送消息
@@ -37,8 +35,7 @@ namespace Meta.RabbitMQ.Producer
 		public async Task<ProducerResult> SendMessageAsync<T>(T model, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
-			var producerMsg = await _serializer.SerializeAsync(new Message<T>(innerHeader, model));
-			return await _messageProducer.SendAsync(producerMsg);
+			return await _messageProducer.SendAsync(new Message<T>(innerHeader, model));
 		}
 
 		/// <summary>
@@ -52,8 +49,7 @@ namespace Meta.RabbitMQ.Producer
 		public async Task<ProducerResult> SendMessageAsync(string content, string exchange, string routingKey, IDictionary<string, string> header = null)
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
-			var producerMsg = await _serializer.SerializeAsync(new Message<string>(innerHeader, content));
-			return await _messageProducer.SendAsync(producerMsg);
+			return await _messageProducer.SendAsync(new Message<string>(innerHeader, content));
 		}
 
 		private IDictionary<string, string> GetMessageHeader(string exchange, string routingKey, IDictionary<string, string> header)

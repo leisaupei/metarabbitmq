@@ -1,4 +1,5 @@
 ﻿using Meta.RabbitMQ.Generic;
+using Meta.RabbitMQ.Serialization;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -12,15 +13,17 @@ namespace Meta.RabbitMQ.Producer
 	{
 		private readonly ILogger _logger;
 		private readonly IConnectionChannelPoolCollection _connectionChannelPools;
+		private readonly ISerializer _serializer;
 
-		public DefaultMessageProducer(ILogger<DefaultMessageProducer> logger, IConnectionChannelPoolCollection connectionChannelPools)
+		public DefaultMessageProducer(ILogger<DefaultMessageProducer> logger, IConnectionChannelPoolCollection connectionChannelPools, ISerializer serializer)
 		{
 			_logger = logger;
 			_connectionChannelPools = connectionChannelPools;
+			_serializer = serializer;
 		}
 
 
-		public Task<ProducerResult> SendAsync(Message<byte[]> message)
+		private Task<ProducerResult> SendAsync(Message<byte[]> message)
 		{
 			IModel channel = null;
 			IConnectionChannelPool pool = null;
@@ -41,7 +44,7 @@ namespace Meta.RabbitMQ.Producer
 				IBasicProperties props = channel.CreateBasicProperties();
 				props.DeliveryMode = 2;
 
-				string exchage = message.GetExchange();
+				string exchage = message.GetExchange() ?? throw new ArgumentNullException("the exchange is null.");
 				string routingKey = message.GetRoutingKey() ?? "";
 
 				if (message.IsInitQueue())
@@ -85,6 +88,16 @@ namespace Meta.RabbitMQ.Producer
 					}
 				}
 			}
+		}
+
+		public async Task<ProducerResult> SendAsync<T>(Message<T> message) where T : class, new()
+		{
+			return await SendAsync(await _serializer.SerializeAsync(message));
+		}
+
+		public async Task<ProducerResult> SendAsync(Message<string> message)
+		{
+			return await SendAsync(await _serializer.SerializeAsync(message));
 		}
 	}
 }

@@ -16,6 +16,11 @@ namespace Meta.RabbitMQ.Consumer
 		public abstract ClientOptions ClientOption { get; }
 
 		/// <summary>
+		/// 开启线程数量, 当值为0时取全局配置, 默认为0
+		/// </summary>
+		public virtual ushort ThreadCount => 0;
+
+		/// <summary>
 		/// 使用泛型转换的语法糖, 若不需要, 直接实现<see cref="IConsumerSubscriber"/>即可
 		/// </summary>
 		/// <param name="message"></param>

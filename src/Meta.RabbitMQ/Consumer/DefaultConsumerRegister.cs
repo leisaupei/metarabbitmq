@@ -41,6 +41,8 @@ namespace Meta.RabbitMQ.Consumer
 			if (_subscribers.Count() == 0)
 				throw new NoSubscriberException();
 			_options = serviceProvider.GetService<IOptions<ConsumerOptions>>().Value;
+			if (_options.SubscribeThreadCount == 0)
+				throw new ArgumentException("the parameter SubscribeThreadCount must be great than 0.");
 			_cts = new CancellationTokenSource();
 		}
 
@@ -53,7 +55,8 @@ namespace Meta.RabbitMQ.Consumer
 		{
 			foreach (var subscriber in _subscribers)
 			{
-				for (int i = 0; i < _options.SubscribeThreadCount; i++)
+				var count = subscriber.ThreadCount > 0 ? subscriber.ThreadCount : _options.SubscribeThreadCount;
+				for (int i = 0; i < count; i++)
 				{
 					Task.Factory.StartNew(() =>
 					{
@@ -133,7 +136,7 @@ namespace Meta.RabbitMQ.Consumer
 			client.OnMessageReceived += async (sender, transportMessage) =>
 			{
 				if (_options.ShowDebugReceivedMessage)
-					_logger.LogDebug($"Received message.host: {client.HostAddress} client: {subscriber.ClientOption}, body: {(await _serializer.DeserializeAsync<string>(transportMessage)).Body}");
+					_logger.LogDebug($"Received message.host: {client.HostAddress} client: {subscriber.ClientOption}, body: {(await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body}");
 
 				try
 				{
@@ -152,7 +155,7 @@ namespace Meta.RabbitMQ.Consumer
 				}
 				catch (Exception e)
 				{
-					_logger.LogError(e, "An exception occurred when process received message.host: '{0}', client:'{1}' Message:'{2}'.", client.HostAddress, subscriber.ClientOption.ToString(), (await _serializer.DeserializeAsync<string>(transportMessage)).Body);
+					_logger.LogError(e, "An exception occurred when process received message.host: '{0}', client:'{1}' Message:'{2}'.", client.HostAddress, subscriber.ClientOption.ToString(), (await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body);
 
 					if (_options.CommitIfAnyException)
 						client.Commit(sender);

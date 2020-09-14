@@ -7,6 +7,11 @@ namespace Meta.RabbitMQ.Consumer
 	public interface IConsumerSubscriber
 	{
 		/// <summary>
+		/// 开启线程数量, 当值为0时取全局配置
+		/// </summary>
+		ushort ThreadCount { get; }
+
+		/// <summary>
 		/// 客户端信息
 		/// </summary>
 		ClientOptions ClientOption { get; }
