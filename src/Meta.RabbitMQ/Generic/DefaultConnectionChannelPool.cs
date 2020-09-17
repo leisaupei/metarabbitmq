@@ -19,13 +19,9 @@ namespace Meta.RabbitMQ.Generic
 		private IConnection _connection;
 		private static readonly object SLock = new object();
 
-		private readonly static SemaphoreSlim _connectionLock = new SemaphoreSlim(initialCount: 1, maxCount: 1);
 		private int _count;
 		private int _maxSize;
 
-		//public DefaultConnectionChannelPool(ILogger<DefaultConnectionChannelPool> logger, IOptions<RabbitMQOption> optionsAccessor) : this(logger, optionsAccessor.Value)
-		//{
-		//}
 		internal DefaultConnectionChannelPool(ILogger logger, RabbitMQOption options)
 		{
 			_logger = logger;
@@ -43,19 +39,11 @@ namespace Meta.RabbitMQ.Generic
 		{
 			lock (SLock)
 			{
-				//_connectionLock.Wait();
-				//try
-				//{
 				while (_count > _maxSize)
 				{
 					Thread.SpinWait(1);
 				}
 				return GetChannel();
-				//}
-				//finally
-				//{
-				//	_connectionLock.Release();
-				//}
 			}
 		}
 

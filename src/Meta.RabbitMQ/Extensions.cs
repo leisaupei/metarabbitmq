@@ -5,6 +5,7 @@ using Meta.RabbitMQ.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -23,9 +24,9 @@ namespace Meta.RabbitMQ.Extension
 		/// <returns></returns>
 		public static IServiceCollection AddRabbitMQProducerService(this IServiceCollection services)
 		{
-			services.AddSingleton<IConnectionChannelPoolCollection, DefaultConnectionChannelPoolCollection>();
-			services.AddSingleton<ISerializer, DefaultSerializer>();
-			services.AddSingleton<IMessageProducer, DefaultMessageProducer>();
+			services.TryAddSingleton<IConnectionChannelPoolCollection, DefaultConnectionChannelPoolCollection>();
+			services.TryAddSingleton<ISerializer, DefaultSerializer>();
+			services.TryAddSingleton<IMessageProducer, DefaultMessageProducer>();
 			return services;
 		}
 		/// <summary>
@@ -38,19 +39,12 @@ namespace Meta.RabbitMQ.Extension
 		public static IServiceCollection AddRabbitMQConsumerService(this IServiceCollection services, Action<ConsumerOptions> action = null)
 		{
 			services.AddOptions();
-			if (action == null)
-				services.Configure<ConsumerOptions>(option =>
-				{
-					option.CommitIfAnyException = ConsumerOptions.DefaultCommitIfAnyException;
-					option.ShowDebugReceivedMessage = ConsumerOptions.DefaultShowDebugReceivedMessage;
-					option.SubscribeThreadCount = ConsumerOptions.DefaultSubscribeThreadCount;
-				});
-			else
+			if (action != null)
 				services.Configure(action);
-			services.AddSingleton<IConnectionChannelPoolCollection, DefaultConnectionChannelPoolCollection>();
-			services.AddSingleton<IConsumerClientFactory, DefaultConsumerClientFactory>();
-			services.AddSingleton<ISerializer, DefaultSerializer>();
-			services.AddSingleton<IConsumerRegister, DefaultConsumerRegister>();
+			services.TryAddSingleton<IConnectionChannelPoolCollection, DefaultConnectionChannelPoolCollection>();
+			services.TryAddSingleton<IConsumerClientFactory, DefaultConsumerClientFactory>();
+			services.TryAddSingleton<ISerializer, DefaultSerializer>();
+			services.TryAddSingleton<IConsumerRegister, DefaultConsumerRegister>();
 			return services;
 		}
 		private static FileConfigurationProvider ProviderCreator { get; set; } = new JsonConfigurationProvider(new JsonConfigurationSource { Optional = true });

@@ -8,11 +8,11 @@
     <Description>.net standard 2.0 RabbitMQ中间件, 支持多个RabbitMQ Server</Description>
     <PackageProjectUrl>https://github.com/leisaupei/metarabbitmq</PackageProjectUrl>
     <RepositoryUrl>https://github.com/leisaupei/metarabbitmq</RepositoryUrl>
-    <PackageReleaseNotes>新增可单独为某个订阅者配置开启线程数</PackageReleaseNotes>
+    <PackageReleaseNotes>注册服务时改为tryadd</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/leisaupei/metarabbitmq/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

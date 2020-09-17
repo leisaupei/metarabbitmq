@@ -48,9 +48,10 @@ namespace Meta.RabbitMQ.XUnitTest
 			IMessageProducer transport = serviceProvider.GetService<IMessageProducer>();
 			for (int i = 0; i < 1000000; i++)
 			{
-				ProducerResult taskresult = await transport.SendAsync(new Message<byte[]>(new Dictionary<string, string> {
-					{ Generic.Headers.Exchange, "test.ex.v1" },
-					{ Generic.Headers.RoutingKey, "test.rk.v1" }, }, Encoding.UTF8.GetBytes("你好呀" + i)));
+				ProducerResult taskresult = await transport.SendAsync(new Message<string>(
+					new Dictionary<string, string> {
+						{ Generic.Headers.Exchange, "test.ex.v1" },
+						{ Generic.Headers.RoutingKey, "test.rk.v1" }, }, "你好呀" + i));
 			}
 		}
 
@@ -71,11 +72,23 @@ namespace Meta.RabbitMQ.XUnitTest
 					VirtualHost = "/",
 				});
 			});
+
+			services.Configure<RabbitMQOptionCollection>(a =>
+			{
+				a.Add(new RabbitMQOption
+				{
+					HostName = "localhost",
+					Port = 5672,
+					UserName = "guest",
+					Password = "guest",
+					VirtualHost = "test",
+				});
+			});
 			services.AddRabbitMQProducerService();
 			services.AddSingleton<TestMqTransporter>();
 			ServiceProvider serviceProvider = services.BuildServiceProvider();
 			TestMqTransporter transport = serviceProvider.GetService<TestMqTransporter>();
-	
+
 			await transport.SendTestMessageAsync(new TestModel { UserId = Guid.NewGuid() });
 		}
 		[Fact]
@@ -120,24 +133,24 @@ namespace Meta.RabbitMQ.XUnitTest
 			IMessageProducer transport = serviceProvider.GetService<IMessageProducer>();
 
 			// send to 'host1_test_mq'
-			await transport.SendAsync(new Message<byte[]>(
+			await transport.SendAsync(new Message<string>(
 					new Dictionary<string, string> {
 					{ Generic.Headers.Exchange, "test.ex.v1" },
 					{ Generic.Headers.QueueName, "test.queue.v1" },
 					{ Generic.Headers.RoutingKey, "test.rk.v1" },
 					{ Generic.Headers.ExchangeType, ExchangeType.Direct },
 					{ Generic.Headers.Name, "host1_test_mq" }
-					}, Encoding.UTF8.GetBytes("你好呀")));
+					}, "你好呀"));
 
 			// send to 'host1_test_mq1'
-			await transport.SendAsync(new Message<byte[]>(
+			await transport.SendAsync(new Message<string>(
 				new Dictionary<string, string> {
 					{ Generic.Headers.Exchange, "test.ex.v2 " },
 					{ Generic.Headers.QueueName, "test.queue.v2" },
 					{ Generic.Headers.RoutingKey, "test.rk.v1" },
 					{ Generic.Headers.ExchangeType, ExchangeType.Direct },
 					{ Generic.Headers.Name, "host1_test_mq1" }
-				}, Encoding.UTF8.GetBytes("你好呀")));
+				}, "你好呀"));
 
 			// send to 'host2_first'
 			//await transport.SendAsync(new TransportMessage(new Dictionary<string, string> { { Generic.Headers.QueueName, "test.queue" }, { Generic.Headers.Name, "host2_first" } }, Encoding.UTF8.GetBytes("你好呀")));

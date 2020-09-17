@@ -14,7 +14,6 @@ namespace Meta.RabbitMQ.Consumer
 
 		public DefaultConsumerClientFactory(IOptions<RabbitMQOptionCollection> rabbitMQOptions, IConnectionChannelPoolCollection connectionChannelPoolCollection)
 		{
-
 			_rabbitMQOptions = rabbitMQOptions.Value;
 			_connectionChannelPoolCollection = connectionChannelPoolCollection;
 		}

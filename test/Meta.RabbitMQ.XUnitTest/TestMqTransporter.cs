@@ -10,7 +10,7 @@ namespace Meta.RabbitMQ.XUnitTest
 {
 	public class TestMqTransporter : MessageProducerBase
 	{
-		public TestMqTransporter(IMessageProducer messageProducer, ISerializer serializer) : base(messageProducer, serializer)
+		public TestMqTransporter(IMessageProducer messageProducer) : base(messageProducer)
 		{
 		}
 		public Task<ProducerResult> SendTestMessageAsync(TestModel model)

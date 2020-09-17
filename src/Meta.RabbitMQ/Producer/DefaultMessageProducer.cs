@@ -62,7 +62,7 @@ namespace Meta.RabbitMQ.Producer
 				// 发送消息
 				channel.BasicPublish(exchage, routingKey, props, message.Body);
 
-				_logger.LogDebug($"RabbitMQ message [{exchage}-{routingKey}] has been published.");
+				//_logger.LogDebug($"RabbitMQ message [{exchage}-{routingKey}] has been published.");
 
 				return Task.FromResult(ProducerResult.Success);
 			}
