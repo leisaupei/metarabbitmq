@@ -92,12 +92,7 @@ namespace Meta.RabbitMQ.Generic
 			message.Headers.Remove(Meta.RabbitMQ.Generic.Headers.ExchangeType);
 			message.Headers.Remove(Meta.RabbitMQ.Generic.Headers.Name);
 			message.Headers.Remove(Meta.RabbitMQ.Generic.Headers.ProducerInitQueue);
-			message.Headers.Remove(Meta.RabbitMQ.Generic.Headers.Exception);
 		}
 
-		public static bool HasException(this Message message)
-		{
-			return message.Headers.ContainsKey(Headers.Exception);
-		}
 	}
 }

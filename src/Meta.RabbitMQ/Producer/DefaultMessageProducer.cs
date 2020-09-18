@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -58,7 +59,9 @@ namespace Meta.RabbitMQ.Producer
 					channel.QueueBind(queue, exchage, routingKey);
 				}
 				message.Remove();
-				props.Headers = message.Headers.ToDictionary(x => x.Key, x => (object)x.Value);
+
+				TransferHeaderProperties(props, message.Headers);
+
 				// 发送消息
 				channel.BasicPublish(exchage, routingKey, props, message.Body);
 
@@ -89,7 +92,23 @@ namespace Meta.RabbitMQ.Producer
 				}
 			}
 		}
-
+		private void TransferHeaderProperties(IBasicProperties props, IDictionary<string, string> msgHeader)
+		{
+			if (msgHeader.Count == 0) return;
+			props.Headers = new Dictionary<string, object>();
+			foreach (var item in msgHeader)
+			{
+				switch (item.Key)
+				{
+					case Generic.Headers.Expiration:
+						props.Expiration = item.Value;
+						break;
+					default:
+						props.Headers.Add(item.Key, item.Value);
+						break;
+				}
+			}
+		}
 		public async Task<ProducerResult> SendAsync<T>(Message<T> message) where T : class, new()
 		{
 			return await SendAsync(await _serializer.SerializeAsync(message));

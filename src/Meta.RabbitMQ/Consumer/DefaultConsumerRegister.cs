@@ -151,7 +151,6 @@ namespace Meta.RabbitMQ.Consumer
 					}
 
 					client.Commit(sender);
-
 				}
 				catch (Exception e)
 				{

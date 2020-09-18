@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-
+using RabbitMQHeaders = RabbitMQ.Client.Headers;
 namespace Meta.RabbitMQ.XUnitTest
 {
 	public class UnitTest1
@@ -46,13 +46,14 @@ namespace Meta.RabbitMQ.XUnitTest
 			services.AddRabbitMQProducerService();
 			ServiceProvider serviceProvider = services.BuildServiceProvider();
 			IMessageProducer transport = serviceProvider.GetService<IMessageProducer>();
-			for (int i = 0; i < 1000000; i++)
-			{
-				ProducerResult taskresult = await transport.SendAsync(new Message<string>(
-					new Dictionary<string, string> {
+			//for (int i = 0; i < 1000000; i++)
+			//{
+			ProducerResult taskresult = await transport.SendAsync(new Message<string>(
+				new Dictionary<string, string> {
 						{ Generic.Headers.Exchange, "test.ex.v1" },
-						{ Generic.Headers.RoutingKey, "test.rk.v1" }, }, "你好呀" + i));
-			}
+						{ Generic.Headers.RoutingKey, "test.rk.v1" },
+				}, "你好呀"));
+			//}
 		}
 
 		[Fact]
@@ -118,12 +119,6 @@ namespace Meta.RabbitMQ.XUnitTest
 					Name = "host1_test_mq1" // required when using IConnectionChannelPoolCollection
 				});
 
-				//collection.Options[2].HostName = "172.16.1.220";
-				//collection.Options[2].Port = 5672;
-				//collection.Options[2].UserName = "lgx";
-				//collection.Options[2].Password = "123456";
-				//collection.Options[2].VirtualHost = "first"; // same host name with index 1 but different virtual host
-				//collection.Options[2].Name = "host2_first"; // required when using IConnectionChannelPoolCollection
 
 			});
 			services.AddRabbitMQProducerService();

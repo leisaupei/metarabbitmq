@@ -8,6 +8,7 @@ using Meta.RabbitMQ.Producer;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQHeaders = RabbitMQ.Client.Headers;
 
 namespace Meta.RabbitMQ.Consumer
 {
@@ -31,7 +32,6 @@ namespace Meta.RabbitMQ.Consumer
 		public event EventHandler<Message<byte[]>> OnMessageReceived;
 
 		public event EventHandler<LogMessageEventArgs> OnLog;
-
 
 		public string HostAddress => _connectionChannelPool.HostAddress;
 
@@ -103,7 +103,7 @@ namespace Meta.RabbitMQ.Consumer
 					_channel.ExchangeDeclare(_clientOption.Exchange, _clientOption.ExchangeType, true);
 					var arguments = new Dictionary<string, object>();
 					if (_rabbitMQOptions.QueueMessageExpires > 0)
-						arguments.Add("x-message-ttl", _rabbitMQOptions.QueueMessageExpires);
+						arguments.Add(RabbitMQHeaders.XMessageTTL, _rabbitMQOptions.QueueMessageExpires);
 					// 声明队列
 					_channel.QueueDeclare(_clientOption.QueueName, durable: true, exclusive: false, autoDelete: false, arguments: arguments);
 				}

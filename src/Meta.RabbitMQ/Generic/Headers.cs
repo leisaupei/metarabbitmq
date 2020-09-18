@@ -1,7 +1,7 @@
-﻿using System;
+﻿using RabbitMQ.Client;
+using System;
 using System.Collections.Generic;
 using System.Text;
-
 namespace Meta.RabbitMQ.Generic
 {
 	public static class Headers
@@ -36,7 +36,9 @@ namespace Meta.RabbitMQ.Generic
 		/// </summary>
 		public const string ProducerInitQueue = "meta-producer-init";
 
-
-		public const string Exception = "meta-exception";
+		/// <summary>
+		/// 参数用于添加消息过期时间属性<see cref="IBasicProperties.Expiration"/>
+		/// </summary>
+		public const string Expiration = "meta-expiration";
 	}
 }

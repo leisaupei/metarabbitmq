@@ -3,7 +3,6 @@ using Meta.RabbitMQ.Generic;
 using Meta.RabbitMQ.Producer;
 using Meta.RabbitMQ.Serialization;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -24,6 +23,7 @@ namespace Meta.RabbitMQ.Extension
 		/// <returns></returns>
 		public static IServiceCollection AddRabbitMQProducerService(this IServiceCollection services)
 		{
+			services.AddLogging();
 			services.TryAddSingleton<IConnectionChannelPoolCollection, DefaultConnectionChannelPoolCollection>();
 			services.TryAddSingleton<ISerializer, DefaultSerializer>();
 			services.TryAddSingleton<IMessageProducer, DefaultMessageProducer>();
@@ -39,40 +39,13 @@ namespace Meta.RabbitMQ.Extension
 		public static IServiceCollection AddRabbitMQConsumerService(this IServiceCollection services, Action<ConsumerOptions> action = null)
 		{
 			services.AddOptions();
+			services.AddLogging();
 			if (action != null)
 				services.Configure(action);
 			services.TryAddSingleton<IConnectionChannelPoolCollection, DefaultConnectionChannelPoolCollection>();
 			services.TryAddSingleton<IConsumerClientFactory, DefaultConsumerClientFactory>();
 			services.TryAddSingleton<ISerializer, DefaultSerializer>();
 			services.TryAddSingleton<IConsumerRegister, DefaultConsumerRegister>();
-			return services;
-		}
-		private static FileConfigurationProvider ProviderCreator { get; set; } = new JsonConfigurationProvider(new JsonConfigurationSource { Optional = true });
-
-		/// <summary>
-		/// 注入json字符串
-		/// </summary>
-		/// <typeparam name="TOptions"></typeparam>
-		/// <param name="services"></param>
-		/// <param name="section"></param>
-		/// <returns></returns>
-		public static IServiceCollection ConfigureJsonValue<TOptions>(this IServiceCollection services, IConfigurationSection section) where TOptions : class
-		{
-			return services.ConfigureJsonValue<TOptions>(Options.DefaultName, section);
-		}
-
-		public static IServiceCollection ConfigureJsonValue<TOptions>(this IServiceCollection services, string name, IConfigurationSection section) where TOptions : class
-		{
-			services.AddSingleton<IOptionsChangeTokenSource<TOptions>>(new ConfigurationChangeTokenSource<TOptions>(name, section))
-				.Configure<TOptions>(name, options =>
-				{
-					var root = new ConfigurationRoot(new List<IConfigurationProvider> { ProviderCreator });
-
-					using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(section.Value)))
-						ProviderCreator.Load(stream);
-
-					root.Bind(options);
-				});
 			return services;
 		}
 	}
