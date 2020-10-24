@@ -9,7 +9,7 @@ namespace Meta.RabbitMQ.Producer
 	/// </summary>
 	public class ProducerResult
 	{
-		private readonly List<ProducerError> _errors = new List<ProducerError>();
+		public List<ProducerError> Errors { get; private set; } = new List<ProducerError>();
 
 		/// <summary>
 		/// 是否成功
@@ -18,10 +18,6 @@ namespace Meta.RabbitMQ.Producer
 
 		public Exception Exception { get; set; }
 
-		/// <summary>
-		/// 错误集合
-		/// </summary>
-		public IEnumerable<ProducerError> Errors => _errors;
 
 		/// <summary>
 		/// 发送成功
@@ -38,7 +34,7 @@ namespace Meta.RabbitMQ.Producer
 			var result = new ProducerResult { Succeeded = false };
 			if (errors != null)
 			{
-				result._errors.AddRange(errors);
+				result.Errors.AddRange(errors);
 			}
 
 			return result;
@@ -58,7 +54,7 @@ namespace Meta.RabbitMQ.Producer
 			};
 			if (errors != null)
 			{
-				result._errors.AddRange(errors);
+				result.Errors.AddRange(errors);
 			}
 
 			return result;
@@ -86,5 +82,15 @@ namespace Meta.RabbitMQ.Producer
 		/// 错误描述
 		/// </summary>
 		public string Description { get; set; }
+
+		/// <summary>
+		/// 错误连接
+		/// </summary>
+		public string HostAddress { get; set; }
+
+		/// <summary>
+		///	发消息错误的内容
+		/// </summary>
+		public string Body { get; set; }
 	}
 }

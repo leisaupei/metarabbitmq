@@ -70,7 +70,7 @@ namespace Meta.RabbitMQ.Generic
 		public static string GetExchangeType(this Message message) => message.Headers.TryGetValue(Meta.RabbitMQ.Generic.Headers.ExchangeType, out var value) ? value : null;
 
 		/// <summary>
-		/// 获取pool name, 当你注入了此服务<see cref="IConnectionChannelPoolCollection"/>
+		/// 获取pool name, 当你注入了此服务<see cref="IChannelPoolCollection"/>
 		/// </summary>
 		/// <returns></returns>
 		public static string GetName(this Message message) => message.Headers.TryGetValue(Meta.RabbitMQ.Generic.Headers.Name, out var value) ? value : null;

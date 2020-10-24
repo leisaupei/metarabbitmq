@@ -25,7 +25,7 @@ namespace Meta.RabbitMQ.Generic
 	}
 
 	/// <summary>
-	/// 日志消息时间
+	/// 日志消息事件
 	/// </summary>
 	public class LogMessageEventArgs : EventArgs
 	{

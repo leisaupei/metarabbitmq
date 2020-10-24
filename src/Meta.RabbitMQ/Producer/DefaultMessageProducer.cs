@@ -13,35 +13,24 @@ namespace Meta.RabbitMQ.Producer
 	internal class DefaultMessageProducer : IMessageProducer
 	{
 		private readonly ILogger _logger;
-		private readonly IConnectionChannelPoolCollection _connectionChannelPools;
+		private readonly IChannelPoolCollection _channelPools;
 		private readonly ISerializer _serializer;
 
-		public DefaultMessageProducer(ILogger<DefaultMessageProducer> logger, IConnectionChannelPoolCollection connectionChannelPools, ISerializer serializer)
+		public DefaultMessageProducer(ILogger<DefaultMessageProducer> logger, IChannelPoolCollection channelPools, ISerializer serializer)
 		{
 			_logger = logger;
-			_connectionChannelPools = connectionChannelPools;
+			_channelPools = channelPools;
 			_serializer = serializer;
 		}
 
-
-		private Task<ProducerResult> SendAsync(Message<byte[]> message)
+		private async Task<ProducerResult> SendAsync(Message<byte[]> message)
 		{
 			IModel channel = null;
-			IConnectionChannelPool pool = null;
+			IChannelPool pool = null;
 			try
 			{
-				_connectionChannelPools.TryGetValue(message.GetName() ?? "", out pool);
+				_channelPools.TryGetValue(message.GetName() ?? "", out pool);
 				channel = pool.GetChannel();
-				//channel.BasicAcks += new EventHandler<BasicAckEventArgs>((o, basic) =>
-				//{
-				//	Console.WriteLine("d:/ack.txt", "\r\n调用了ack;DeliveryTag:" + basic.DeliveryTag.ToString() + ";Multiple:" + basic.Multiple.ToString() + "时间:" + DateTime.Now.ToString());
-				//});
-				//channel.BasicNacks += new EventHandler<BasicNackEventArgs>((o, basic) =>
-				//{
-				//	//MQ服务器出现了异常，可能会出现Nack的情况
-				//	Console.WriteLine("d:/nack.txt", "\r\n调用了Nacks;DeliveryTag:" + basic.DeliveryTag.ToString() + ";Multiple:" + basic.Multiple.ToString() + "时间:" + DateTime.Now.ToString());
-				//});
-
 				IBasicProperties props = channel.CreateBasicProperties();
 				props.DeliveryMode = 2;
 
@@ -65,9 +54,9 @@ namespace Meta.RabbitMQ.Producer
 				// 发送消息
 				channel.BasicPublish(exchage, routingKey, props, message.Body);
 
-				//_logger.LogDebug($"RabbitMQ message [{exchage}-{routingKey}] has been published.");
+				_logger.LogDebug($"RabbitMQ message [{exchage}-{routingKey}] has been published.");
 
-				return Task.FromResult(ProducerResult.Success);
+				return ProducerResult.Success;
 			}
 			catch (Exception ex)
 			{
@@ -75,23 +64,21 @@ namespace Meta.RabbitMQ.Producer
 				ProducerError errors = new ProducerError
 				{
 					Code = ex.HResult.ToString(),
-					Description = ex.Message
+					Description = ex.Message,
+					HostAddress = pool.HostAddress,
+					Body = (await _serializer.DeserializeAsync(message, typeof(string))).Body as string
 				};
 
-				return Task.FromResult(ProducerResult.Failed(wrapperEx, errors));
+				return ProducerResult.Failed(wrapperEx, errors);
 			}
 			finally
 			{
 				if (channel != null && pool != null)
-				{
-					bool returned = pool.Return(channel);
-					if (!returned)
-					{
+					if (!pool.Return(channel))
 						channel.Dispose();
-					}
-				}
 			}
 		}
+
 		private void TransferHeaderProperties(IBasicProperties props, IDictionary<string, string> msgHeader)
 		{
 			if (msgHeader.Count == 0) return;
@@ -109,6 +96,7 @@ namespace Meta.RabbitMQ.Producer
 				}
 			}
 		}
+
 		public async Task<ProducerResult> SendAsync<T>(Message<T> message) where T : class, new()
 		{
 			return await SendAsync(await _serializer.SerializeAsync(message));

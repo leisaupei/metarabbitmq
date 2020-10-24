@@ -3,13 +3,12 @@ using System;
 
 namespace Meta.RabbitMQ.Generic
 {
-	public interface IConnectionChannelPool : IDisposable
+	public interface IChannelPool : IDisposable
 	{
 		/// <summary>
 		/// 连接池连接的IP地址
 		/// </summary>
 		string HostAddress { get; }
-
 		/// <summary>
 		/// 获取连接
 		/// </summary>

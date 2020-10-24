@@ -17,13 +17,15 @@ namespace Meta.RabbitMQ.Producer
 		protected readonly IMessageProducer _messageProducer;
 
 		/// <summary>
-		/// 如果使用<see cref="IConnectionChannelPoolCollection"/>注入, 此项需要override
+		/// 如果使用<see cref="IChannelPoolCollection"/>注入, 此项需要override
 		/// </summary>
 		protected virtual string Name { get; } = string.Empty;
+
 		protected MessageProducerBase(IMessageProducer messageProducer)
 		{
 			_messageProducer = messageProducer;
 		}
+
 		/// <summary>
 		/// 发送消息
 		/// </summary>
@@ -32,10 +34,10 @@ namespace Meta.RabbitMQ.Producer
 		/// <param name="routingKey"></param>
 		/// <param name="header">消息头部参数<see cref="IBasicProperties.Headers"/> 或者 <see cref="Generic.Headers"/></param>
 		/// <returns></returns>
-		public async Task<ProducerResult> SendMessageAsync<T>(T model, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
+		public Task<ProducerResult> SendMessageAsync<T>(T model, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
-			return await _messageProducer.SendAsync(new Message<T>(innerHeader, model));
+			return _messageProducer.SendAsync(new Message<T>(innerHeader, model));
 		}
 
 		/// <summary>
@@ -46,10 +48,10 @@ namespace Meta.RabbitMQ.Producer
 		/// <param name="routingKey"></param>
 		/// <param name="header">消息头部参数<see cref="IBasicProperties.Headers"/> 或者 <see cref="Generic.Headers"/></param>
 		/// <returns></returns>
-		public async Task<ProducerResult> SendMessageAsync(string content, string exchange, string routingKey, IDictionary<string, string> header = null)
+		public Task<ProducerResult> SendMessageAsync(string content, string exchange, string routingKey, IDictionary<string, string> header = null)
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
-			return await _messageProducer.SendAsync(new Message<string>(innerHeader, content));
+			return _messageProducer.SendAsync(new Message<string>(innerHeader, content));
 		}
 
 		private IDictionary<string, string> GetMessageHeader(string exchange, string routingKey, IDictionary<string, string> header)

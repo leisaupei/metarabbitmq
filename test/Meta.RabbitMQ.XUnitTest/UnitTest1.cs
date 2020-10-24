@@ -3,10 +3,12 @@ using Meta.RabbitMQ.Generic;
 using Meta.RabbitMQ.Producer;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -25,12 +27,12 @@ namespace Meta.RabbitMQ.XUnitTest
 		[Fact]
 		public void Test1()
 		{
+
 		}
 		[Fact]
 		public async Task SingleHost()
 		{
 			ServiceCollection services = new ServiceCollection();
-			services.AddLogging();
 			services.AddOptions();
 			services.Configure<RabbitMQOptionCollection>(a =>
 			{
@@ -44,16 +46,22 @@ namespace Meta.RabbitMQ.XUnitTest
 				});
 			});
 			services.AddRabbitMQProducerService();
+			services.AddSingleton<TestMqTransporter>();
 			ServiceProvider serviceProvider = services.BuildServiceProvider();
-			IMessageProducer transport = serviceProvider.GetService<IMessageProducer>();
+			//IMessageProducer transport = serviceProvider.GetService<IMessageProducer>();
+
+			TestMqTransporter transport = serviceProvider.GetService<TestMqTransporter>();
+			var result = await transport.SendTestMessageAsync(new TestModel { UserId = Guid.NewGuid() });
+			_output.WriteLine(result.ToString());
 			//for (int i = 0; i < 1000000; i++)
 			//{
-			ProducerResult taskresult = await transport.SendAsync(new Message<string>(
-				new Dictionary<string, string> {
-						{ Generic.Headers.Exchange, "test.ex.v1" },
-						{ Generic.Headers.RoutingKey, "test.rk.v1" },
-				}, "你好呀"));
+			//	ProducerResult taskresult = await transport.SendAsync(new Message<string>(
+			//	new Dictionary<string, string> {
+			//			{ Generic.Headers.Exchange, "test.ex.v1" },
+			//			{ Generic.Headers.RoutingKey, "test.rk.v1" },
+			//	}, "你好呀"));
 			//}
+			Console.ReadKey();
 		}
 
 		[Fact]
@@ -106,7 +114,7 @@ namespace Meta.RabbitMQ.XUnitTest
 					UserName = "guest",
 					Password = "guest",
 					VirtualHost = "test_mq",
-					Name = "host1_test_mq" // required when using IConnectionChannelPoolCollection
+					Name = "host1_test_mq" // required when using IchannelPoolCollection
 				});
 
 				o.Add(new RabbitMQOption
@@ -116,7 +124,7 @@ namespace Meta.RabbitMQ.XUnitTest
 					UserName = "guest",
 					Password = "guest",
 					VirtualHost = "test_mq",
-					Name = "host1_test_mq1" // required when using IConnectionChannelPoolCollection
+					Name = "host1_test_mq1" // required when using IchannelPoolCollection
 				});
 
 

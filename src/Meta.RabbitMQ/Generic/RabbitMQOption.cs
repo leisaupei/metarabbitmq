@@ -32,10 +32,12 @@ namespace Meta.RabbitMQ.Generic
 		/// 获取poolname 默认:""
 		/// </summary>
 		public string Name { get; set; } = DefaultName;
+
 		/// <summary>
 		/// 最大请求channel数量
 		/// </summary>
 		public ushort MaxChannelPoolSize { get; set; } = DefaultChannelPoolSize;
+
 		/// <summary>
 		/// 队列消息过期时间. Default 864000000 ms (10 天). 0 表示不添加TTL
 		/// </summary>

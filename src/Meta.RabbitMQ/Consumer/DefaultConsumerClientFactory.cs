@@ -9,13 +9,13 @@ namespace Meta.RabbitMQ.Consumer
 {
 	public sealed class DefaultConsumerClientFactory : IConsumerClientFactory
 	{
-		private readonly IConnectionChannelPoolCollection _connectionChannelPoolCollection;
+		private readonly IChannelPoolCollection _channelPoolCollection;
 		private readonly RabbitMQOptionCollection _rabbitMQOptions;
 
-		public DefaultConsumerClientFactory(IOptions<RabbitMQOptionCollection> rabbitMQOptions, IConnectionChannelPoolCollection connectionChannelPoolCollection)
+		public DefaultConsumerClientFactory(IOptions<RabbitMQOptionCollection> rabbitMQOptions, IChannelPoolCollection channelPoolCollection)
 		{
 			_rabbitMQOptions = rabbitMQOptions.Value;
-			_connectionChannelPoolCollection = connectionChannelPoolCollection;
+			_channelPoolCollection = channelPoolCollection;
 		}
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace Meta.RabbitMQ.Consumer
 		{
 			try
 			{
-				_connectionChannelPoolCollection.TryGetValue(clientOption.Name, out IConnectionChannelPool pool);
+				_channelPoolCollection.TryGetValue(clientOption.Name, out IChannelPool pool);
 				DefaultConsumerClient client = new DefaultConsumerClient(clientOption, pool, _rabbitMQOptions.Options.First(a => a.Name == clientOption.Name));
 				client.Connect();
 				return client;

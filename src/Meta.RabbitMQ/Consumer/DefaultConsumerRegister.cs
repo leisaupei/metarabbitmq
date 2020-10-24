@@ -1,19 +1,19 @@
-﻿using Meta.RabbitMQ.Generic;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using Meta.RabbitMQ.Generic;
 using Meta.RabbitMQ.Producer;
 using Meta.RabbitMQ.Serialization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System.Linq;
 
 namespace Meta.RabbitMQ.Consumer
 {
@@ -30,29 +30,23 @@ namespace Meta.RabbitMQ.Consumer
 		private CancellationTokenSource _cts;
 		private Task _compositeTask;
 		private bool _disposed;
-		private static bool _isHealthy = true;
-
 		public DefaultConsumerRegister(ILogger<DefaultConsumerRegister> logger, IServiceProvider serviceProvider)
 		{
 			_logger = logger;
 			_consumerClientFactory = serviceProvider.GetService<IConsumerClientFactory>();
 			_serializer = serviceProvider.GetService<ISerializer>();
 			_subscribers = serviceProvider.GetService<IEnumerable<IConsumerSubscriber>>();
-			if (_subscribers.Count() == 0)
-				throw new NoSubscriberException();
 			_options = serviceProvider.GetService<IOptions<ConsumerOptions>>().Value;
-			if (_options.SubscribeThreadCount == 0)
-				throw new ArgumentException("the parameter SubscribeThreadCount must be great than 0.");
 			_cts = new CancellationTokenSource();
-		}
-
-		public bool IsHealthy()
-		{
-			return _isHealthy;
 		}
 
 		public void Start()
 		{
+			if (_subscribers.Count() == 0)
+				throw new NoSubscriberException();
+			if (_options.SubscribeThreadCount == 0)
+				throw new ArgumentException("the parameter SubscribeThreadCount must be great than 0.");
+
 			foreach (var subscriber in _subscribers)
 			{
 				var count = subscriber.ThreadCount > 0 ? subscriber.ThreadCount : _options.SubscribeThreadCount;
@@ -75,7 +69,6 @@ namespace Meta.RabbitMQ.Consumer
 						}
 						catch (BrokerConnectionException e)
 						{
-							_isHealthy = false;
 							_logger.LogError(e, e.Message);
 						}
 						catch (Exception e)
@@ -86,19 +79,6 @@ namespace Meta.RabbitMQ.Consumer
 				}
 			}
 			_compositeTask = Task.CompletedTask;
-		}
-
-		public void ReStart(bool force = false)
-		{
-			if (!IsHealthy() || force)
-			{
-				Cancel();
-
-				_cts = new CancellationTokenSource();
-				_isHealthy = true;
-
-				Start();
-			}
 		}
 
 		public void Dispose()
@@ -135,7 +115,10 @@ namespace Meta.RabbitMQ.Consumer
 		{
 			client.OnMessageReceived += async (sender, transportMessage) =>
 			{
-				if (_options.ShowDebugReceivedMessage)
+				if (_options.ShowReceivedMessage)
+					_logger.LogInformation($"Received message.host: {client.HostAddress} client: {subscriber.ClientOption}, body: {(await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body}");
+
+				else
 					_logger.LogDebug($"Received message.host: {client.HostAddress} client: {subscriber.ClientOption}, body: {(await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body}");
 
 				try
@@ -180,14 +163,11 @@ namespace Meta.RabbitMQ.Consumer
 					_logger.LogWarning("RabbitMQ consumer unregistered. --> " + logmsg.Reason);
 					break;
 				case EventType.ConsumerShutdown:
-					_isHealthy = false;
 					_logger.LogWarning("RabbitMQ consumer shutdown. --> " + logmsg.Reason);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
 	}
-
 }

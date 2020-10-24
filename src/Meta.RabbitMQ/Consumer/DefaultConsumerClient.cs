@@ -16,16 +16,16 @@ namespace Meta.RabbitMQ.Consumer
 	{
 		private readonly static SemaphoreSlim _connectionLock = new SemaphoreSlim(initialCount: 1, maxCount: 1);
 		private readonly ClientOptions _clientOption;
-		private readonly IConnectionChannelPool _connectionChannelPool;
+		private readonly IChannelPool _channelPool;
 
 		private readonly RabbitMQOption _rabbitMQOptions;
 		private IConnection _connection;
 		private IModel _channel;
 
-		public DefaultConsumerClient(ClientOptions clientOption, IConnectionChannelPool connectionChannelPool, RabbitMQOption options)
+		public DefaultConsumerClient(ClientOptions clientOption, IChannelPool channelPool, RabbitMQOption options)
 		{
 			_clientOption = clientOption;
-			_connectionChannelPool = connectionChannelPool;
+			_channelPool = channelPool;
 			_rabbitMQOptions = options;
 		}
 
@@ -33,7 +33,7 @@ namespace Meta.RabbitMQ.Consumer
 
 		public event EventHandler<LogMessageEventArgs> OnLog;
 
-		public string HostAddress => _connectionChannelPool.HostAddress;
+		public string HostAddress => _channelPool.HostAddress;
 
 		public void Listening(TimeSpan timeout, CancellationToken cancellationToken)
 		{
@@ -95,7 +95,7 @@ namespace Meta.RabbitMQ.Consumer
 				if (_channel == null)
 				{
 
-					_connection = _connectionChannelPool.GetConnection();
+					_connection = _channelPool.GetConnection();
 
 					_channel = _connection.CreateModel();
 

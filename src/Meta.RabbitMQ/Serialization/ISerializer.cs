@@ -8,6 +8,7 @@ namespace Meta.RabbitMQ.Serialization
 	public interface ISerializer
 	{
 		Task<Message> DeserializeAsync(Message<byte[]> transportMessage, Type valueType);
+
 		Task<Message<byte[]>> SerializeAsync(Message message);
 	}
 }

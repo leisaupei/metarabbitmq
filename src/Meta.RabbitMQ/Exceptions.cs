@@ -32,9 +32,16 @@ namespace Meta.RabbitMQ
 		}
 	}
 
-	public class ConnectionChannelPoolNotFoundException : Exception
+	public class ChannelPoolNotFoundException : Exception
 	{
-		public ConnectionChannelPoolNotFoundException(string name) : base($"Can not found {nameof(IConnectionChannelPool)} the pool name of '{name}'")
+		public ChannelPoolNotFoundException(string name) : base($"Can not found {nameof(IChannelPool)} the pool name of '{name}'")
+		{
+
+		}
+	}
+	public class ChannelPoolRestartTimeoutException : Exception
+	{
+		public ChannelPoolRestartTimeoutException() : base($"Connection pool restart time out.")
 		{
 
 		}

@@ -10,19 +10,21 @@ using RabbitMQ.Client;
 namespace Meta.RabbitMQ.Generic
 {
 
-	public class DefaultConnectionChannelPool : IConnectionChannelPool
+	public class DefaultChannelPool : IChannelPool
 	{
 		public string HostAddress { get; }
+
+
 		private readonly Func<IConnection> _connectionActivator;
 		private readonly ILogger _logger;
 		private readonly ConcurrentQueue<IModel> _pool;
 		private IConnection _connection;
-		private static readonly object SLock = new object();
+		private static readonly object _sLock = new object();
 
 		private int _count;
 		private int _maxSize;
 
-		internal DefaultConnectionChannelPool(ILogger logger, RabbitMQOption options)
+		internal DefaultChannelPool(ILogger logger, RabbitMQOption options)
 		{
 			_logger = logger;
 			_maxSize = options.MaxChannelPoolSize;
@@ -32,12 +34,13 @@ namespace Meta.RabbitMQ.Generic
 
 			HostAddress = $"{options.HostName}:{options.Port}";
 
-			_logger.LogDebug($"RabbitMQ configuration:'HostName:{options.HostName}, Port:{options.Port}");
+			_logger.LogDebug($"RabbitMQ configuration:'HostName:{options.HostName}, Port:{options.Port}, Virtual Host:{options.VirtualHost}'");
+
 		}
 
-		IModel IConnectionChannelPool.GetChannel()
+		IModel IChannelPool.GetChannel()
 		{
-			lock (SLock)
+			lock (_sLock)
 			{
 				while (_count > _maxSize)
 				{
@@ -47,7 +50,7 @@ namespace Meta.RabbitMQ.Generic
 			}
 		}
 
-		bool IConnectionChannelPool.Return(IModel connection)
+		bool IChannelPool.Return(IModel connection)
 		{
 			return Return(connection);
 		}
