@@ -27,7 +27,7 @@ namespace Meta.RabbitMQ.Generic
 				if (option.Name == null)
 					throw new ArgumentNullException(nameof(option.Name));
 				if (_pools.ContainsKey(option.Name))
-					throw new ArgumentException($"the name '{option.Name}' already exists");
+					throw new ChannelPoolNameAlreadyExistsException(option.Name);
 				_pools.Add(option.Name, new DefaultChannelPool(logger, option));
 			}
 		}

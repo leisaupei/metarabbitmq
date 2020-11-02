@@ -39,6 +39,13 @@ namespace Meta.RabbitMQ
 
 		}
 	}
+	public class ChannelPoolNameAlreadyExistsException : Exception
+	{
+		public ChannelPoolNameAlreadyExistsException(string name) : base($"{nameof(IChannelPool)} the pool name of '{name}' already exists.")
+		{
+
+		}
+	}
 	public class ChannelPoolRestartTimeoutException : Exception
 	{
 		public ChannelPoolRestartTimeoutException() : base($"Connection pool restart time out.")

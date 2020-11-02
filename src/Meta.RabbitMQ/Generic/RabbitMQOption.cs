@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using RabbitMQ.Client;
 
 namespace Meta.RabbitMQ.Generic
@@ -7,9 +8,26 @@ namespace Meta.RabbitMQ.Generic
 	public class RabbitMQOptionCollection
 	{
 		public List<RabbitMQOption> Options { get; private set; } = new List<RabbitMQOption>();
+		/// <summary>
+		/// 添加rabbitmq连接配置
+		/// </summary>
+		/// <param name="option"></param>
+		/// <exception cref="ChannelPoolNameAlreadyExistsException">若存在名称相同的<see cref="RabbitMQOption.Name"/>则抛出此异常</exception>
 		public void Add(RabbitMQOption option)
 		{
+			if (Options.Any(a => a.Name == option.Name))
+				throw new ChannelPoolNameAlreadyExistsException(option.Name);
 			Options.Add(option);
+		}
+
+		/// <summary>
+		/// 添加rabbitmq连接配置, 若存在相同<see cref="RabbitMQOption.Name"/>则不添加
+		/// </summary>
+		/// <param name="option"></param>
+		public void TryAdd(RabbitMQOption option)
+		{
+			if (!Options.Any(a => a.Name == option.Name))
+				Options.Add(option);
 		}
 	}
 	public class RabbitMQOption

@@ -25,9 +25,39 @@ namespace Meta.RabbitMQ.XUnitTest
 		}
 
 		[Fact]
-		public void Test1()
+		public void TestAddSameNameChannelPool()
 		{
+			ServiceCollection services = new ServiceCollection();
+			services.AddOptions();
+			services.Configure<RabbitMQOptionCollection>(a =>
+			{
+				a.TryAdd(new RabbitMQOption
+				{
+					HostName = "localhost",
+					Port = 5672,
+					UserName = "guest",
+					Password = "guest",
+					VirtualHost = "/",
+					Name = "name1"
+				});
+			});
+			services.Configure<RabbitMQOptionCollection>(a =>
+			{
+				a.TryAdd(new RabbitMQOption
+				{
+					HostName = "localhost",
+					Port = 5672,
+					UserName = "guest",
+					Password = "guest",
+					VirtualHost = "/",
+					Name = "name1"
+				});
+			});
+			services.AddRabbitMQProducerService();
+			services.AddSingleton<TestMqTransporter>();
+			ServiceProvider serviceProvider = services.BuildServiceProvider();
 
+			TestMqTransporter transport = serviceProvider.GetService<TestMqTransporter>();
 		}
 		[Fact]
 		public async Task SingleHost()
