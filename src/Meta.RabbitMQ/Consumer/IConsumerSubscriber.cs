@@ -12,6 +12,11 @@ namespace Meta.RabbitMQ.Consumer
 		ushort ThreadCount { get; }
 
 		/// <summary>
+		/// 如果抛出异常是否也确认消费消息
+		/// </summary>
+		bool CommitIfAnyException { get; }
+
+		/// <summary>
 		/// 客户端信息
 		/// </summary>
 		ClientOptions ClientOption { get; }

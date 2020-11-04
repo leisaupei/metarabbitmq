@@ -139,7 +139,7 @@ namespace Meta.RabbitMQ.Consumer
 				{
 					_logger.LogError(e, "An exception occurred when process received message.host: '{0}', client:'{1}' Message:'{2}'.", client.HostAddress, subscriber.ClientOption.ToString(), (await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body);
 
-					if (_options.CommitIfAnyException)
+					if (subscriber.CommitIfAnyException)
 						client.Commit(sender);
 					else
 						client.Reject(sender);

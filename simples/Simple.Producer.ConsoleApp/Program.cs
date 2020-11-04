@@ -14,7 +14,7 @@ namespace Simple.Producer.ConsoleApp
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static async Task Main(string[] args)
 		{
 			Console.WriteLine("Hello World!");
 			IServiceCollection services = new ServiceCollection();
@@ -35,10 +35,10 @@ namespace Simple.Producer.ConsoleApp
 			services.AddSingleton<TestMqTransporter>();
 			ServiceProvider serviceProvider = services.BuildServiceProvider();
 			TestMqTransporter transport = serviceProvider.GetService<TestMqTransporter>();
-			Parallel.For(0, 1000000, new ParallelOptions { MaxDegreeOfParallelism = 10000 }, async (i) =>
-			{
-				await transport.SendTestMessageAsync(new TestModel { UserId = Guid.NewGuid() });
-			});
+			//Parallel.For(0, 1000000, new ParallelOptions { MaxDegreeOfParallelism = 10000 }, async (i) =>
+			//{
+			await transport.SendTestMessageAsync(new TestModel { UserId = Guid.NewGuid() });
+			//});
 			Console.ReadKey();
 		}
 	}

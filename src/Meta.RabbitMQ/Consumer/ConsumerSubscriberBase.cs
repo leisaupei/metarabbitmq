@@ -21,6 +21,11 @@ namespace Meta.RabbitMQ.Consumer
 		public virtual ushort ThreadCount => 0;
 
 		/// <summary>
+		/// 如果抛出异常是否也确认消费消息, 默认: true
+		/// </summary>
+		public virtual bool CommitIfAnyException => true;
+
+		/// <summary>
 		/// 使用泛型转换的语法糖, 若不需要, 直接实现<see cref="IConsumerSubscriber"/>即可
 		/// </summary>
 		/// <param name="message"></param>

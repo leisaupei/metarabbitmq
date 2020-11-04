@@ -24,7 +24,6 @@ namespace Simple.Producer.ConsoleApp
 			};
 			return SendMessageAsync(model, "test.ex.v1", "test.rk.v1", header);
 		}
-
 	}
 	public class TestModel
 	{
