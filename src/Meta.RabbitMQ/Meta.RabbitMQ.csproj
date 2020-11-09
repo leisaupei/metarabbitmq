@@ -7,7 +7,7 @@
     <Description>.net standard 2.0 RabbitMQ中间件, 支持多个RabbitMQ Server</Description>
     <PackageProjectUrl>https://github.com/leisaupei/metarabbitmq</PackageProjectUrl>
     <RepositoryUrl>https://github.com/leisaupei/metarabbitmq</RepositoryUrl>
-    <PackageReleaseNotes>更新发送消息返回实体内容</PackageReleaseNotes>
+    <PackageReleaseNotes>更新添加消费者生命周期过滤器, 更新发送泛型消息不受类和无参构造函数约束</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>1.0.8</Version>
