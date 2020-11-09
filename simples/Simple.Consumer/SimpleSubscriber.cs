@@ -20,7 +20,7 @@ namespace Simple.Consumer
 
 		public string Name => "v1";
 
-		public override ClientOptions ClientOption => new ClientOptions(Exchange, RoutingKey, ExchangeType, Queue, Name);
+		public override ClientOption ClientOption => new ClientOption(Exchange, RoutingKey, ExchangeType, Queue, Name);
 
 		public override Task Invoke(Message<string> message)
 		{
@@ -40,7 +40,7 @@ namespace Simple.Consumer
 
 		public string Name => "v1";
 
-		public override ClientOptions ClientOption => new ClientOptions(Exchange, RoutingKey, ExchangeType, Queue, Name);
+		public override ClientOption ClientOption => new ClientOption(Exchange, RoutingKey, ExchangeType, Queue, Name);
 		public override Task Invoke(Message<string> message)
 		{
 			return Task.Run(() => Console.WriteLine(message.Body));

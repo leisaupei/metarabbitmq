@@ -11,6 +11,6 @@ namespace Meta.RabbitMQ.Consumer
 		/// Create a new instance of <see cref="IConsumerClient" />.
 		/// </summary>
 		/// <param name="clientOption">消费者客户端配置</param>
-		IConsumerClient Create(ClientOptions clientOption);
+		IConsumerClient Create(ClientOption clientOption);
 	}
 }

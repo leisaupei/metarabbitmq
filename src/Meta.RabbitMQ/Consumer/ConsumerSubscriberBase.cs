@@ -13,7 +13,7 @@ namespace Meta.RabbitMQ.Consumer
 		/// <summary>
 		/// 抽象实现客户端配置
 		/// </summary>
-		public abstract ClientOptions ClientOption { get; }
+		public abstract ClientOption ClientOption { get; }
 
 		/// <summary>
 		/// 开启线程数量, 当值为0时取全局配置, 默认为0

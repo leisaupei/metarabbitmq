@@ -12,17 +12,17 @@ using RabbitMQHeaders = RabbitMQ.Client.Headers;
 
 namespace Meta.RabbitMQ.Consumer
 {
-	internal sealed class DefaultConsumerClient : IConsumerClient
+	internal sealed class ConsumerClient : IConsumerClient
 	{
 		private readonly static SemaphoreSlim _connectionLock = new SemaphoreSlim(initialCount: 1, maxCount: 1);
-		private readonly ClientOptions _clientOption;
+		private readonly ClientOption _clientOption;
 		private readonly IChannelPool _channelPool;
 
 		private readonly RabbitMQOption _rabbitMQOptions;
 		private IConnection _connection;
 		private IModel _channel;
 
-		public DefaultConsumerClient(ClientOptions clientOption, IChannelPool channelPool, RabbitMQOption options)
+		public ConsumerClient(ClientOption clientOption, IChannelPool channelPool, RabbitMQOption options)
 		{
 			_clientOption = clientOption;
 			_channelPool = channelPool;
@@ -154,7 +154,7 @@ namespace Meta.RabbitMQ.Consumer
 				{
 					headers.Add(header.Key, header.Value == null ? null : Encoding.UTF8.GetString((byte[])header.Value));
 				}
-			headers.Add(Meta.RabbitMQ.Generic.Headers.QueueName, _clientOption.QueueName);
+			//headers.Add(Meta.RabbitMQ.Generic.Headers.QueueName, _clientOption.QueueName);
 
 			var message = new Message<byte[]>(headers, e.Body.ToArray());
 

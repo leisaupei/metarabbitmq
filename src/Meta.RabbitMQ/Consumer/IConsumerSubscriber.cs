@@ -19,7 +19,7 @@ namespace Meta.RabbitMQ.Consumer
 		/// <summary>
 		/// 客户端信息
 		/// </summary>
-		ClientOptions ClientOption { get; }
+		ClientOption ClientOption { get; }
 
 		/// <summary>
 		/// 消息体类型

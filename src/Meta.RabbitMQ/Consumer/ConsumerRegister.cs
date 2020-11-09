@@ -18,10 +18,10 @@ using RabbitMQ.Client;
 namespace Meta.RabbitMQ.Consumer
 {
 
-	public class DefaultConsumerRegister : IConsumerRegister
+	public class ConsumerRegister : IConsumerRegister
 	{
 		private readonly ILogger _logger;
-
+		private readonly IConsumerReceivedFilter _consumerReceiveFilter;
 		private readonly IConsumerClientFactory _consumerClientFactory;
 		private readonly ISerializer _serializer;
 		private readonly IEnumerable<IConsumerSubscriber> _subscribers;
@@ -30,13 +30,14 @@ namespace Meta.RabbitMQ.Consumer
 		private CancellationTokenSource _cts;
 		private Task _compositeTask;
 		private bool _disposed;
-		public DefaultConsumerRegister(ILogger<DefaultConsumerRegister> logger, IServiceProvider serviceProvider)
+		public ConsumerRegister(ILogger<ConsumerRegister> logger, IServiceProvider serviceProvider)
 		{
 			_logger = logger;
 			_consumerClientFactory = serviceProvider.GetService<IConsumerClientFactory>();
 			_serializer = serviceProvider.GetService<ISerializer>();
 			_subscribers = serviceProvider.GetService<IEnumerable<IConsumerSubscriber>>();
 			_options = serviceProvider.GetService<IOptions<ConsumerOptions>>().Value;
+			_consumerReceiveFilter = serviceProvider.GetService<IConsumerReceivedFilter>();
 			_cts = new CancellationTokenSource();
 		}
 
@@ -115,17 +116,16 @@ namespace Meta.RabbitMQ.Consumer
 		{
 			client.OnMessageReceived += async (sender, transportMessage) =>
 			{
-				if (_options.ShowReceivedMessage)
-					_logger.LogInformation($"Received message.host: {client.HostAddress} client: {subscriber.ClientOption}, body: {(await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body}");
-
-				else
-					_logger.LogDebug($"Received message.host: {client.HostAddress} client: {subscriber.ClientOption}, body: {(await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body}");
-
+				Message message = null;
+				var commit = false;
 				try
 				{
 					try
 					{
-						Message message = await _serializer.DeserializeAsync(transportMessage, subscriber.GetMessageType());
+						message = await _serializer.DeserializeAsync(transportMessage, subscriber.GetMessageType());
+
+						await _consumerReceiveFilter.OnSubscriberInvokingAsync(new ConsumerContext(client.HostAddress, subscriber.ClientOption, message));
+
 						await subscriber.Invoke(message);
 					}
 					catch (Exception e)
@@ -133,13 +133,16 @@ namespace Meta.RabbitMQ.Consumer
 						throw e;
 					}
 
-					client.Commit(sender);
+					commit = true;
 				}
 				catch (Exception e)
 				{
-					_logger.LogError(e, "An exception occurred when process received message.host: '{0}', client:'{1}' Message:'{2}'.", client.HostAddress, subscriber.ClientOption.ToString(), (await _serializer.DeserializeAsync(transportMessage, typeof(string))).Body);
+					await _consumerReceiveFilter.OnSubscriberExceptionAsync(new ExceptionConsumerContext(client.HostAddress, subscriber.ClientOption, message, e));
 
-					if (subscriber.CommitIfAnyException)
+				}
+				finally
+				{
+					if (subscriber.CommitIfAnyException || commit)
 						client.Commit(sender);
 					else
 						client.Reject(sender);

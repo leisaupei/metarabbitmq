@@ -24,9 +24,9 @@ namespace Meta.RabbitMQ.Extension
 		public static IServiceCollection AddRabbitMQProducerService(this IServiceCollection services)
 		{
 			services.AddLogging();
-			services.TryAddSingleton<IChannelPoolCollection, DefaultChannelPoolCollection>();
+			services.TryAddSingleton<IChannelPoolCollection, ChannelPoolCollection>();
 			services.TryAddSingleton<ISerializer, DefaultSerializer>();
-			services.TryAddSingleton<IMessageProducer, DefaultMessageProducer>();
+			services.TryAddSingleton<IMessageProducer, MessageProducer>();
 			return services;
 		}
 		/// <summary>
@@ -39,14 +39,13 @@ namespace Meta.RabbitMQ.Extension
 			"若无需注入IConsumerRegister(Subscriber使用AddScoped注入时), 则使用AddRabbitMQConsumer, 但需要注册IApplicationLifetime启动/关闭事件")]
 		public static IServiceCollection AddRabbitMQConsumerService(this IServiceCollection services, Action<ConsumerOptions> action = null)
 		{
-			services.AddOptions();
 			services.AddLogging();
 			if (action != null)
 				services.Configure(action);
-			services.TryAddSingleton<IChannelPoolCollection, DefaultChannelPoolCollection>();
+			services.TryAddSingleton<IChannelPoolCollection, ChannelPoolCollection>();
 			services.TryAddSingleton<ISerializer, DefaultSerializer>();
-			services.TryAddSingleton<IConsumerClientFactory, DefaultConsumerClientFactory>();
-			services.TryAddSingleton<IConsumerRegister, DefaultConsumerRegister>();
+			services.TryAddSingleton<IConsumerClientFactory, ConsumerClientFactory>();
+			services.TryAddSingleton<IConsumerRegister, ConsumerRegister>();
 			return services;
 		}
 
@@ -59,12 +58,18 @@ namespace Meta.RabbitMQ.Extension
 		/// <returns></returns>
 		public static IServiceCollection AddRabbitMQConsumer(this IServiceCollection services, Action<ConsumerOptions> action = null)
 		{
-			services.AddOptions();
 			services.AddLogging();
 			if (action != null)
 				services.Configure(action);
-			services.TryAddSingleton<IChannelPoolCollection, DefaultChannelPoolCollection>();
-			services.TryAddSingleton<IConsumerClientFactory, DefaultConsumerClientFactory>();
+
+			var options = new ConsumerOptions();
+			action?.Invoke(options);
+
+			if (options.ConsumerReceiveFilterType != null)
+				services.TryAddSingleton(typeof(IConsumerReceivedFilter), options.ConsumerReceiveFilterType);
+			services.TryAddSingleton<IConsumerReceivedFilter, ConsumerReceivedFilter>();
+			services.TryAddSingleton<IChannelPoolCollection, ChannelPoolCollection>();
+			services.TryAddSingleton<IConsumerClientFactory, ConsumerClientFactory>();
 			services.TryAddSingleton<ISerializer, DefaultSerializer>();
 			return services;
 		}
@@ -77,14 +82,8 @@ namespace Meta.RabbitMQ.Extension
 		/// <returns></returns>
 		public static IServiceCollection AddRabbitMQConsumerHostedService(this IServiceCollection services, Action<ConsumerOptions> action = null)
 		{
-			services.AddOptions();
-			services.AddLogging();
-			if (action != null)
-				services.Configure(action);
-			services.TryAddSingleton<IChannelPoolCollection, DefaultChannelPoolCollection>();
-			services.TryAddSingleton<IConsumerClientFactory, DefaultConsumerClientFactory>();
-			services.TryAddSingleton<ISerializer, DefaultSerializer>();
-			services.TryAddSingleton<IConsumerRegister, DefaultConsumerRegister>();
+			services.AddRabbitMQConsumer(action);
+			services.TryAddSingleton<IConsumerRegister, ConsumerRegister>();
 			services.AddHostedService<ConsumerRegisterHostedService>();
 			return services;
 		}

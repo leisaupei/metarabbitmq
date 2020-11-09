@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Meta.RabbitMQ.Producer
 {
-	internal class DefaultMessageProducer : IMessageProducer
+	internal class MessageProducer : IMessageProducer
 	{
 		private readonly ILogger _logger;
 		private readonly IChannelPoolCollection _channelPools;
 		private readonly ISerializer _serializer;
 
-		public DefaultMessageProducer(ILogger<DefaultMessageProducer> logger, IChannelPoolCollection channelPools, ISerializer serializer)
+		public MessageProducer(ILogger<MessageProducer> logger, IChannelPoolCollection channelPools, ISerializer serializer)
 		{
 			_logger = logger;
 			_channelPools = channelPools;
@@ -65,7 +65,7 @@ namespace Meta.RabbitMQ.Producer
 				{
 					Code = ex.HResult.ToString(),
 					Description = ex.Message,
-					HostAddress = pool.HostAddress,
+					HostAddress = pool?.HostAddress,
 					Body = (await _serializer.DeserializeAsync(message, typeof(string))).Body as string
 				};
 
@@ -97,7 +97,7 @@ namespace Meta.RabbitMQ.Producer
 			}
 		}
 
-		public async Task<ProducerResult> SendAsync<T>(Message<T> message) where T : class, new()
+		public async Task<ProducerResult> SendAsync<T>(Message<T> message)
 		{
 			return await SendAsync(await _serializer.SerializeAsync(message));
 		}

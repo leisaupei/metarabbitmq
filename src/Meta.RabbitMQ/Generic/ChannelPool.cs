@@ -10,7 +10,7 @@ using RabbitMQ.Client;
 namespace Meta.RabbitMQ.Generic
 {
 
-	public class DefaultChannelPool : IChannelPool
+	public class ChannelPool : IChannelPool
 	{
 		public string HostAddress { get; }
 
@@ -24,7 +24,7 @@ namespace Meta.RabbitMQ.Generic
 		private int _count;
 		private int _maxSize;
 
-		internal DefaultChannelPool(ILogger logger, RabbitMQOption options)
+		internal ChannelPool(ILogger logger, RabbitMQOption options)
 		{
 			_logger = logger;
 			_maxSize = options.MaxChannelPoolSize;

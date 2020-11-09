@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Meta.RabbitMQ.Generic
 {
-	public class DefaultChannelPoolCollection : IChannelPoolCollection
+	public class ChannelPoolCollection : IChannelPoolCollection
 	{
 		private readonly IDictionary<string, IChannelPool> _pools = new Dictionary<string, IChannelPool>();
 		private readonly ILogger _logger;
@@ -18,7 +18,7 @@ namespace Meta.RabbitMQ.Generic
 
 		public int Count => _pools.Count;
 
-		public DefaultChannelPoolCollection(ILogger<DefaultChannelPoolCollection> logger, IOptions<RabbitMQOptionCollection> optionsAccessor)
+		public ChannelPoolCollection(ILogger<ChannelPoolCollection> logger, IOptions<RabbitMQOptionCollection> optionsAccessor)
 		{
 			_logger = logger;
 			_optionsAccessor = optionsAccessor;
@@ -28,7 +28,7 @@ namespace Meta.RabbitMQ.Generic
 					throw new ArgumentNullException(nameof(option.Name));
 				if (_pools.ContainsKey(option.Name))
 					throw new ChannelPoolNameAlreadyExistsException(option.Name);
-				_pools.Add(option.Name, new DefaultChannelPool(logger, option));
+				_pools.Add(option.Name, new ChannelPool(logger, option));
 			}
 		}
 

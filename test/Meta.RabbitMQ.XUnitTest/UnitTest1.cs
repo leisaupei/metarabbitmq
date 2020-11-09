@@ -1,3 +1,4 @@
+using Meta.RabbitMQ.Consumer;
 using Meta.RabbitMQ.Extension;
 using Meta.RabbitMQ.Generic;
 using Meta.RabbitMQ.Producer;
@@ -91,7 +92,7 @@ namespace Meta.RabbitMQ.XUnitTest
 			//			{ Generic.Headers.RoutingKey, "test.rk.v1" },
 			//	}, "你好呀"));
 			//}
-			Console.ReadKey();
+			//Console.ReadKey();
 		}
 
 		[Fact]

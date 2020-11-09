@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Meta.RabbitMQ.Generic
 {
-	public class ClientOptions
+	public class ClientOption
 	{
-		public ClientOptions(string exchange, string routingKey, string exchangeType, string queueName, string name = "")
+		public ClientOption(string exchange, string routingKey, string exchangeType, string queueName, string name = "")
 		{
 			Exchange = exchange ?? throw new ArgumentNullException(nameof(exchange));
 			RoutingKey = routingKey ?? throw new ArgumentNullException(nameof(routingKey));

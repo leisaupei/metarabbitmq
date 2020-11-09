@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace Meta.RabbitMQ.Consumer
 {
-	public sealed class DefaultConsumerClientFactory : IConsumerClientFactory
+	public sealed class ConsumerClientFactory : IConsumerClientFactory
 	{
 		private readonly IChannelPoolCollection _channelPoolCollection;
 		private readonly RabbitMQOptionCollection _rabbitMQOptions;
 
-		public DefaultConsumerClientFactory(IOptions<RabbitMQOptionCollection> rabbitMQOptions, IChannelPoolCollection channelPoolCollection)
+		public ConsumerClientFactory(IOptions<RabbitMQOptionCollection> rabbitMQOptions, IChannelPoolCollection channelPoolCollection)
 		{
 			_rabbitMQOptions = rabbitMQOptions.Value;
 			_channelPoolCollection = channelPoolCollection;
@@ -23,12 +23,12 @@ namespace Meta.RabbitMQ.Consumer
 		/// </summary>
 		/// <param name="clientOption"></param>
 		/// <returns></returns>
-		public IConsumerClient Create(ClientOptions clientOption)
+		public IConsumerClient Create(ClientOption clientOption)
 		{
 			try
 			{
 				_channelPoolCollection.TryGetValue(clientOption.Name, out IChannelPool pool);
-				DefaultConsumerClient client = new DefaultConsumerClient(clientOption, pool, _rabbitMQOptions.Options.First(a => a.Name == clientOption.Name));
+				ConsumerClient client = new ConsumerClient(clientOption, pool, _rabbitMQOptions.Options.First(a => a.Name == clientOption.Name));
 				client.Connect();
 				return client;
 			}
