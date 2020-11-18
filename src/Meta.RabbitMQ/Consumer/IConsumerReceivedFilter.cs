@@ -11,15 +11,15 @@ namespace Meta.RabbitMQ.Consumer
 		/// <summary>
 		/// 执行subscriber.invoke方法之前执行
 		/// </summary>
-		/// <param name="message"></param>
+		/// <param name="context"></param>
 		/// <returns></returns>
-		Task OnSubscriberInvokingAsync(ConsumerContext message);
+		Task OnSubscriberInvokingAsync(ConsumerContext context);
 
 		/// <summary>
 		/// 当subscriber报错时执行
 		/// </summary>
-		/// <param name="exceptionConsumerContext"></param>
+		/// <param name="context"></param>
 		/// <returns></returns>
-		Task OnSubscriberExceptionAsync(ExceptionConsumerContext exceptionConsumerContext);
+		Task OnSubscriberExceptionAsync(ExceptionConsumerContext context);
 	}
 }

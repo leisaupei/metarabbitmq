@@ -12,6 +12,11 @@ namespace Meta.RabbitMQ.Consumer
 		ushort ThreadCount { get; }
 
 		/// <summary>
+		/// 同时在队列消费的数量
+		/// </summary>
+		ushort PrefetchCount { get; }
+
+		/// <summary>
 		/// 如果抛出异常是否也确认消费消息
 		/// </summary>
 		bool CommitIfAnyException { get; }

@@ -21,6 +21,11 @@ namespace Meta.RabbitMQ.Consumer
 		public virtual ushort ThreadCount => 0;
 
 		/// <summary>
+		/// 同时消费消息的数量
+		/// </summary>
+		public virtual ushort PrefetchCount => 0;
+
+		/// <summary>
 		/// 如果抛出异常是否也确认消费消息, 默认: true
 		/// </summary>
 		public virtual bool CommitIfAnyException => true;

@@ -61,7 +61,7 @@ namespace Meta.RabbitMQ.Consumer
 							{
 								RegisterMessageProcessor(client, subscriber);
 
-								client.Listening(_pollingDelay, _cts.Token);
+								client.Listening(_pollingDelay, _cts.Token, subscriber.PrefetchCount);
 							}
 						}
 						catch (OperationCanceledException)
@@ -117,7 +117,6 @@ namespace Meta.RabbitMQ.Consumer
 			client.OnMessageReceived += async (sender, transportMessage) =>
 			{
 				Message message = null;
-				var commit = false;
 				try
 				{
 					try
@@ -132,17 +131,13 @@ namespace Meta.RabbitMQ.Consumer
 					{
 						throw e;
 					}
-
-					commit = true;
+					client.Commit(sender);
 				}
 				catch (Exception e)
 				{
 					await _consumerReceiveFilter.OnSubscriberExceptionAsync(new ExceptionConsumerContext(client.HostAddress, subscriber.ClientOption, message, e));
 
-				}
-				finally
-				{
-					if (subscriber.CommitIfAnyException || commit)
+					if (subscriber.CommitIfAnyException)
 						client.Commit(sender);
 					else
 						client.Reject(sender);

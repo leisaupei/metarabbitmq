@@ -17,7 +17,7 @@ namespace Meta.RabbitMQ.Consumer
 		/// <summary>
 		/// 队列监听
 		/// </summary>
-		void Listening(TimeSpan timeout, CancellationToken cancellationToken);
+		void Listening(TimeSpan timeout, CancellationToken cancellationToken, ushort prefetchCount);
 
 		/// <summary>
 		/// 消息确认接收

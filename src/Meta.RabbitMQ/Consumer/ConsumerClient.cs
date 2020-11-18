@@ -35,13 +35,15 @@ namespace Meta.RabbitMQ.Consumer
 
 		public string HostAddress => _channelPool.HostAddress;
 
-		public void Listening(TimeSpan timeout, CancellationToken cancellationToken)
+		public void Listening(TimeSpan timeout, CancellationToken cancellationToken, ushort prefetchCount)
 		{
 			Connect();
 
 			_channel.QueueBind(_clientOption.QueueName, _clientOption.Exchange, _clientOption.RoutingKey);
 
 			var consumer = new EventingBasicConsumer(_channel);
+			if (prefetchCount > 0)
+				_channel.BasicQos(0, prefetchCount, false);
 			consumer.Received += OnConsumerReceived;
 			consumer.Shutdown += OnConsumerShutdown;
 			consumer.Registered += OnConsumerRegistered;
