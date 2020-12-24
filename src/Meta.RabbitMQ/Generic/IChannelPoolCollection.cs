@@ -19,7 +19,6 @@ namespace Meta.RabbitMQ.Generic
 		/// <param name="name"></param>
 		/// <param name="value"></param>
 		/// <exception cref="ChannelPoolNotFoundException">没有找到连接池</exception>
-		/// <exception cref="ChannelPoolRestartTimeoutException">连接池报错</exception>
 		/// <returns></returns>
 		bool TryGetValue(string name, out IChannelPool value);
 	}

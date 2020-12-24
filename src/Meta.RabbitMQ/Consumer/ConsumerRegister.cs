@@ -27,7 +27,7 @@ namespace Meta.RabbitMQ.Consumer
 		private readonly IEnumerable<IConsumerSubscriber> _subscribers;
 		private readonly TimeSpan _pollingDelay = TimeSpan.FromSeconds(1);
 		private readonly ConsumerOptions _options;
-		private CancellationTokenSource _cts;
+		private readonly CancellationTokenSource _cts;
 		private Task _compositeTask;
 		private bool _disposed;
 		public ConsumerRegister(ILogger<ConsumerRegister> logger, IServiceProvider serviceProvider)
@@ -124,6 +124,9 @@ namespace Meta.RabbitMQ.Consumer
 						message = await _serializer.DeserializeAsync(transportMessage, subscriber.GetMessageType());
 
 						await _consumerReceiveFilter.OnSubscriberInvokingAsync(new ConsumerContext(client.HostAddress, subscriber.ClientOption, message));
+
+						if (message.Body is null)
+							throw new MessageBodyNullException();
 
 						await subscriber.Invoke(message);
 					}

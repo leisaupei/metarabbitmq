@@ -33,7 +33,6 @@ namespace Meta.RabbitMQ.Producer
 				channel = pool.GetChannel();
 				IBasicProperties props = channel.CreateBasicProperties();
 				props.DeliveryMode = 2;
-
 				string exchage = message.GetExchange() ?? throw new ArgumentNullException("the exchange is null.");
 				string routingKey = message.GetRoutingKey() ?? "";
 

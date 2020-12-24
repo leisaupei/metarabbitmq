@@ -7,14 +7,14 @@
     <Description>.net standard 2.0 RabbitMQ中间件, 支持多个RabbitMQ Server</Description>
     <PackageProjectUrl>https://github.com/leisaupei/metarabbitmq</PackageProjectUrl>
     <RepositoryUrl>https://github.com/leisaupei/metarabbitmq</RepositoryUrl>
-    <PackageReleaseNotes>更新添加消费者生命周期过滤器, 更新发送泛型消息不受类和无参构造函数约束</PackageReleaseNotes>
+    <PackageReleaseNotes>message body为null时抛出异常</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
     <PackageLicenseFile></PackageLicenseFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>leisaupei</Copyright>
-    <FileVersion>1.0.9.0</FileVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

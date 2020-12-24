@@ -18,8 +18,8 @@ namespace Simple.Consumer
 
 		public string Queue => "test.queue.v1";
 
-		public string Name => "v1";
-
+		public string Name => "";
+		public override ushort PrefetchCount => 1;
 		public override ClientOption ClientOption => new ClientOption(Exchange, RoutingKey, ExchangeType, Queue, Name);
 
 		public override Task Invoke(Message<string> message)
