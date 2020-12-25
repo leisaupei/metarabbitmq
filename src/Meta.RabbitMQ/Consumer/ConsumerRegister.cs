@@ -123,7 +123,8 @@ namespace Meta.RabbitMQ.Consumer
 					{
 						message = await _serializer.DeserializeAsync(transportMessage, subscriber.GetMessageType());
 
-						await _consumerReceiveFilter.OnSubscriberInvokingAsync(new ConsumerContext(client.HostAddress, subscriber.ClientOption, message));
+						var context = new ConsumerContext(client.HostAddress, subscriber.ClientOption, message, transportMessage);
+						await _consumerReceiveFilter.OnSubscriberInvokingAsync(context);
 
 						if (message.Body is null)
 							throw new MessageBodyNullException();
@@ -138,7 +139,8 @@ namespace Meta.RabbitMQ.Consumer
 				}
 				catch (Exception e)
 				{
-					await _consumerReceiveFilter.OnSubscriberExceptionAsync(new ExceptionConsumerContext(client.HostAddress, subscriber.ClientOption, message, e));
+					var context = new ExceptionConsumerContext(client.HostAddress, subscriber.ClientOption, message, transportMessage, e);
+					await _consumerReceiveFilter.OnSubscriberExceptionAsync(context);
 
 					if (subscriber.CommitIfAnyException)
 						client.Commit(sender);
