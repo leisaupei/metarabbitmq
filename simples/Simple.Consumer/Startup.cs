@@ -31,32 +31,18 @@ namespace Simple.Consumer
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.Configure<RabbitMQOptionCollection>(_configuration);
+			services.Configure<RabbitMQOptionCollection>(_configuration.GetSection("rabbitmq"));
 			services.AddSingleton<IConsumerSubscriber, SimpleSubscriber>();
 			//services.AddSingleton<IConsumerSubscriber, SimpleSubscriber2>();
 			services.AddRabbitMQConsumerHostedService(a =>
 			{
 				a.ConsumerReceiveFilter<CustomConsumerReceivedFilter>();
 			});
-			services.AddControllers();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public void Configure()
 		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			app.UseRouting();
-
-			app.UseAuthorization();
-
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-
-			});
 		}
 
 	}

@@ -25,22 +25,31 @@ namespace Meta.RabbitMQ.Generic
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
 		public Message<T> ToMessage<T>()
-		{
+		{ 
 			return new Message<T>(Headers, (T)Body);
 		}
 	}
+
 	/// <summary>
 	/// 泛型消息重载
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public class Message<T> : Message
 	{
-		public Message(IDictionary<string, string> headers, T value) : base(headers, value)
-		{
-
-		}
+		public Message(IDictionary<string, string> headers, T value) : base(headers, value) { }
 
 		public new T Body => (T)base.Body;
+	}
+
+	/// <summary>
+	/// 泛型消息重载
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class Messages<T> : Message
+	{
+		public Messages(IDictionary<string, string> headers, IList<T> value) : base(headers, value) { }
+
+		public new IList<T> Body => (IList<T>)base.Body;
 	}
 
 	public static class MessageExtensions

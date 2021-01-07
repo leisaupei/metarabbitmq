@@ -15,8 +15,8 @@ namespace Meta.RabbitMQ.Producer
 		/// <summary>
 		/// 发送字符串类型消息, 使用<see cref="Serialization.ISerializer"/>序列化
 		/// </summary>
-		/// <param name="message"></param>
+		/// <param name="messages"></param>
 		/// <returns></returns>
-		Task<ProducerResult> SendAsync(Message<string> message);
+		Task<ProducerResult> SendAsync<T>(Messages<T> messages);
 	}
 }

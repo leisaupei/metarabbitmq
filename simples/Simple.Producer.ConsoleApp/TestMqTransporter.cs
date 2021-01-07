@@ -16,13 +16,11 @@ namespace Simple.Producer.ConsoleApp
 		}
 		public Task<ProducerResult> SendTestMessageAsync(TestModel model)
 		{
-			var header = new Dictionary<string, string> {
-				{ "a", "a" } ,
-				//{ Meta.RabbitMQ.Generic.Headers.QueueName, "test.queue.v1" },
-				//{ Meta.RabbitMQ.Generic.Headers.ExchangeType, ExchangeType.Direct },
-				//{ Meta.RabbitMQ.Generic.Headers.ProducerInitQueue, "1" }
-			};
-			return SendMessageAsync(model, "test.ex.v1", "test.rk.v1", header);
+			return SendMessageAsync(model, "test.ex.v1", "test.rk.v1");
+		}
+		public Task<ProducerResult> SendTestMessageAsync(TestModel[] model)
+		{
+			return SendMessagesAsync(model, "test.ex.v1", "test.rk.v1");
 		}
 	}
 	public class TestModel

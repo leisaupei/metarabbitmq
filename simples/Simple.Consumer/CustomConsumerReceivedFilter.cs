@@ -22,8 +22,7 @@ namespace Simple.Consumer
 
 		public override Task OnSubscriberInvokingAsync(ConsumerContext context)
 		{
-
-			Console.WriteLine("OnSubscriberInvokingAsync, " + JsonConvert.SerializeObject(context.Message));
+			//Console.WriteLine("OnSubscriberInvokingAsync, " + JsonConvert.SerializeObject(context.Message));
 			return Task.CompletedTask;
 		}
 	}

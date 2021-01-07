@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -11,23 +12,20 @@ namespace Meta.RabbitMQ.Generic
 {
 	public class ChannelPoolCollection : IChannelPoolCollection
 	{
-		private readonly IDictionary<string, IChannelPool> _pools = new Dictionary<string, IChannelPool>();
-		private readonly ILogger _logger;
-		private readonly IOptions<RabbitMQOptionCollection> _optionsAccessor;
-		private static readonly object _reactivateLock = new object();
+		private readonly IDictionary<string, IChannelPool> _pools = new ConcurrentDictionary<string, IChannelPool>();
 
 		public int Count => _pools.Count;
 
 		public ChannelPoolCollection(ILogger<ChannelPoolCollection> logger, IOptions<RabbitMQOptionCollection> optionsAccessor)
 		{
-			_logger = logger;
-			_optionsAccessor = optionsAccessor;
 			foreach (var option in optionsAccessor.Value.Options)
 			{
 				if (option.Name == null)
 					throw new ArgumentNullException(nameof(option.Name));
+
 				if (_pools.ContainsKey(option.Name))
 					throw new ChannelPoolNameAlreadyExistsException(option.Name);
+
 				_pools.Add(option.Name, new ChannelPool(logger, option));
 			}
 		}
@@ -38,6 +36,7 @@ namespace Meta.RabbitMQ.Generic
 				p.Dispose();
 			_pools.Clear();
 		}
+
 		void IDisposable.Dispose() => Dispose();
 
 		public bool TryGetValue(string name, out IChannelPool value)

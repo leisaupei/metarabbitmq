@@ -9,6 +9,7 @@ namespace Meta.RabbitMQ.Generic
 		/// 连接池连接的IP地址
 		/// </summary>
 		string HostAddress { get; }
+
 		/// <summary>
 		/// 获取连接
 		/// </summary>

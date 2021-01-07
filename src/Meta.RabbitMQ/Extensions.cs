@@ -29,25 +29,6 @@ namespace Meta.RabbitMQ.Extension
 			services.TryAddSingleton<IMessageProducer, MessageProducer>();
 			return services;
 		}
-		/// <summary>
-		/// 注入消费者服务, 需要 AddConfigure<see cref="RabbitMQOptionCollection"/>
-		/// </summary>
-		/// <param name="services"></param>
-		/// <param name="action"></param>
-		/// <returns></returns>
-		[Obsolete("使用AddRabbitMQConsumerHostedService代替, 无需注册IApplicationLifetime启动/关闭事件. " +
-			"若无需注入IConsumerRegister(Subscriber使用AddScoped注入时), 则使用AddRabbitMQConsumer, 但需要注册IApplicationLifetime启动/关闭事件")]
-		public static IServiceCollection AddRabbitMQConsumerService(this IServiceCollection services, Action<ConsumerOptions> action = null)
-		{
-			services.AddLogging();
-			if (action != null)
-				services.Configure(action);
-			services.TryAddSingleton<IChannelPoolCollection, ChannelPoolCollection>();
-			services.TryAddSingleton<ISerializer, DefaultSerializer>();
-			services.TryAddSingleton<IConsumerClientFactory, ConsumerClientFactory>();
-			services.TryAddSingleton<IConsumerRegister, ConsumerRegister>();
-			return services;
-		}
 
 		/// <summary>
 		/// 注入消费者服务, 需要 AddConfigure <see cref="RabbitMQOptionCollection"/>
