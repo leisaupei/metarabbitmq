@@ -34,14 +34,14 @@ namespace Meta.RabbitMQ.Serialization
 		/// </summary>
 		/// <param name="transportMessage"></param>
 		/// <returns></returns>
-		Task<string> ChangeMessageToStringAsync(Message<byte[]> transportMessage);
+		Task<string> SerializeMessageToStringAsync(Message<byte[]> transportMessage);
 
 		/// <summary>
 		/// 转化二进制messages to string, 用于打印日志
 		/// </summary>
 		/// <param name="transportMessages"></param>
 		/// <returns></returns>
-		Task<string> ChangeMessageToStringAsync(Messages<byte[]> transportMessages);
+		Task<string> SerializeMessageToStringAsync(Messages<byte[]> transportMessages);
 
 		/// <summary>
 		/// 转化二进制messageBody to string

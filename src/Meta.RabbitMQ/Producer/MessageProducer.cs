@@ -41,7 +41,7 @@ namespace Meta.RabbitMQ.Producer
 			}
 			catch (Exception ex)
 			{
-				return ExceptionReturn(await _serializer.ChangeMessageToStringAsync(message), pool?.HostAddress, ex);
+				return ExceptionReturn(await _serializer.SerializeMessageToStringAsync(message), pool?.HostAddress, ex);
 			}
 			finally
 			{
@@ -68,7 +68,7 @@ namespace Meta.RabbitMQ.Producer
 			}
 			catch (Exception ex)
 			{
-				return ExceptionReturn(await _serializer.ChangeMessageToStringAsync(messages), pool?.HostAddress, ex);
+				return ExceptionReturn(await _serializer.SerializeMessageToStringAsync(messages), pool?.HostAddress, ex);
 			}
 			finally
 			{

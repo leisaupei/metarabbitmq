@@ -43,15 +43,15 @@ namespace Meta.RabbitMQ.Producer
 		/// <summary>
 		/// 发送消息
 		/// </summary>
-		/// <param name="model">消息模型 按照<see cref="ISerializer"/>规则序列化</param>
+		/// <param name="models">消息模型 按照<see cref="ISerializer"/>规则序列化</param>
 		/// <param name="exchange">交换机</param>
 		/// <param name="routingKey"></param>
 		/// <param name="header">消息头部参数<see cref="IBasicProperties.Headers"/> 或者 <see cref="Generic.Headers"/></param>
 		/// <returns></returns>
-		public Task<ProducerResult> SendMessagesAsync<T>(IList<T> model, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
+		public Task<ProducerResult> SendMessagesAsync<T>(IList<T> models, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
-			return _messageProducer.SendAsync(new Messages<T>(innerHeader, model));
+			return _messageProducer.SendAsync(new Messages<T>(innerHeader, models));
 		}
 
 		/// <summary>

@@ -77,14 +77,14 @@ namespace Meta.RabbitMQ.Serialization
 			return Task.FromResult(Encoding.UTF8.GetBytes(content));
 		}
 
-		public virtual async Task<string> ChangeMessageToStringAsync(Message<byte[]> transportMessage)
+		public virtual async Task<string> SerializeMessageToStringAsync(Message<byte[]> transportMessage)
 		{
 			var message = await DeserializeAsync(transportMessage, typeof(string));
 
 			return await SerializeObjectToStringAsync(message);
 		}
 
-		public virtual Task<string> ChangeMessageToStringAsync(Messages<byte[]> transportMessages)
+		public virtual Task<string> SerializeMessageToStringAsync(Messages<byte[]> transportMessages)
 		{
 			Message message;
 			if (transportMessages.Body?.Any() ?? false)
