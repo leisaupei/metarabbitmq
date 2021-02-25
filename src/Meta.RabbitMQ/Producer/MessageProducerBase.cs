@@ -48,7 +48,7 @@ namespace Meta.RabbitMQ.Producer
 		/// <param name="routingKey"></param>
 		/// <param name="header">消息头部参数<see cref="IBasicProperties.Headers"/> 或者 <see cref="Generic.Headers"/></param>
 		/// <returns></returns>
-		public Task<ProducerResult> SendMessagesAsync<T>(IList<T> models, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
+		public Task<ProducerResult> SendMessagesAsync<T>(IEnumerable<T> models, string exchange, string routingKey, IDictionary<string, string> header = null) where T : class, new()
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
 			return _messageProducer.SendAsync(new Messages<T>(innerHeader, models));
@@ -76,7 +76,7 @@ namespace Meta.RabbitMQ.Producer
 		/// <param name="routingKey"></param>
 		/// <param name="header">消息头部参数<see cref="IBasicProperties.Headers"/> 或者 <see cref="Generic.Headers"/></param>
 		/// <returns></returns>
-		public Task<ProducerResult> SendMessagesAsync(IList<string> contents, string exchange, string routingKey, IDictionary<string, string> header = null)
+		public Task<ProducerResult> SendMessagesAsync(IEnumerable<string> contents, string exchange, string routingKey, IDictionary<string, string> header = null)
 		{
 			IDictionary<string, string> innerHeader = GetMessageHeader(exchange, routingKey, header);
 			return _messageProducer.SendAsync(new Messages<string>(innerHeader, contents));

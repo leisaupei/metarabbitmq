@@ -47,9 +47,9 @@ namespace Meta.RabbitMQ.Generic
 	/// <typeparam name="T"></typeparam>
 	public class Messages<T> : Message
 	{
-		public Messages(IDictionary<string, string> headers, IList<T> value) : base(headers, value) { }
+		public Messages(IDictionary<string, string> headers, IEnumerable<T> value) : base(headers, value) { }
 
-		public new IList<T> Body => (IList<T>)base.Body;
+		public new IEnumerable<T> Body => (IEnumerable<T>)base.Body;
 	}
 
 	public static class MessageExtensions
