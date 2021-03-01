@@ -66,8 +66,8 @@ public class SomeController : Controller
     {
         var header = new Dictionary<string, string>()
         {
-            [Meta.RabbitMQ.Generic.Headers.Exchange] = "query.handle.ex", //交换机
-            [Meta.RabbitMQ.Generic.Headers.RoutingKey] = "product.handle.rk", //路由key
+            [Meta.RabbitMQ.Generic.Headers.Exchange] = "test.ex.v1", //交换机
+            [Meta.RabbitMQ.Generic.Headers.RoutingKey] = "test.rk.v1", //路由key
             [Meta.RabbitMQ.Generic.Headers.Name] = "", //配置中的Name
             // ...
             //以上就是发送者必填参数, 更多参数见Meta.RabbitMQ.Generic.Headers
