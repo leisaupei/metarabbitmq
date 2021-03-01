@@ -122,6 +122,9 @@ namespace Meta.RabbitMQ.XUnitTest
 					UserName = "guest",
 					Password = "guest",
 					VirtualHost = "test",
+					Name = "",
+
+
 				});
 			});
 			services.AddRabbitMQProducerService();

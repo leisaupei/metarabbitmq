@@ -39,32 +39,6 @@ namespace Meta.RabbitMQ.Serialization
 			return Task.FromResult(new Message(transportMessage.Headers, JsonConvert.DeserializeObject(json, valueType)));
 		}
 
-		//private Task<Messages<T>> DeserializeAsync<T>(Messages<byte[]> transportMessage)
-		//{
-		//	if (!(transportMessage.Body?.Any() ?? false))
-		//	{
-		//		return Task.FromResult(new Messages<T>(transportMessage.Headers, new T[0]));
-		//	}
-		//	int length = transportMessage.Body.Count();
-
-		//	T[] messages = new T[length];
-		//	var isString = typeof(T) == typeof(string);
-		//	for (int i = 0; i < length; i++)
-		//	{
-		//		object json = Encoding.UTF8.GetString(transportMessage.Body.ElementAt(i));
-		//		if (isString)
-		//		{
-		//			messages[i] = (T)json;
-		//		}
-		//		else
-		//		{
-		//			messages[i] = JsonConvert.DeserializeObject<T>((string)json);
-		//		}
-
-		//	}
-		//	return Task.FromResult(new Messages<T>(transportMessage.Headers, messages));
-		//}
-
 		public virtual Task<byte[]> SerializeObjectToBytesAsync(object messageBody)
 		{
 			if (messageBody == null)

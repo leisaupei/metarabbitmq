@@ -12,12 +12,12 @@ namespace Meta.RabbitMQ.Consumer
 		ushort ThreadCount { get; }
 
 		/// <summary>
-		/// 同时在队列消费的数量
+		/// 同时消费消息的数量, 同时消费线程数, 默认是1, 0则是无限制
 		/// </summary>
 		ushort PrefetchCount { get; }
 
 		/// <summary>
-		/// 如果抛出异常是否也确认消费消息
+		/// 抛出异常是否也确认消费消息, 默认: true, 选择false可能会产生大量日志, 清谨慎选择
 		/// </summary>
 		bool CommitIfAnyException { get; }
 
