@@ -133,7 +133,7 @@ namespace Meta.RabbitMQ.Consumer
 					}
 					catch (Exception e)
 					{
-						throw e;
+						throw new SubscriberInvokeException(e);
 					}
 					client.Commit(sender);
 				}

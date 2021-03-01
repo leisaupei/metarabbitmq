@@ -36,7 +36,7 @@ namespace Simple.Consumer
 			//services.AddSingleton<IConsumerSubscriber, SimpleSubscriber2>();
 			services.AddRabbitMQConsumerHostedService(a =>
 			{
-				a.ConsumerReceiveFilter<CustomConsumerReceivedFilter>();
+				//	a.ConsumerReceiveFilter<CustomConsumerReceivedFilter>();
 			});
 		}
 

@@ -10,14 +10,18 @@ namespace Simple.Consumer
 {
 	public class CustomConsumerReceivedFilter : ConsumerReceivedFilter
 	{
-		public CustomConsumerReceivedFilter(ILoggerFactory loggerFactory) : base(loggerFactory)
+		private readonly ILogger<CustomConsumerReceivedFilter> _logger;
+
+		public CustomConsumerReceivedFilter(ILogger<CustomConsumerReceivedFilter> logger, ILoggerFactory loggerFactory) : base(loggerFactory)
 		{
+			_logger = logger;
 		}
 
 		public override Task OnSubscriberExceptionAsync(ExceptionConsumerContext context)
 		{
-			Console.WriteLine("OnSubscriberExceptionAsync, " + context.Exception.Message);
+			_logger.LogError(context.Exception, "");
 			return Task.CompletedTask;
+			//	return Task.CompletedTask;
 		}
 
 		public override Task OnSubscriberInvokingAsync(ConsumerContext context)

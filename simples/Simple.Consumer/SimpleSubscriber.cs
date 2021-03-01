@@ -18,14 +18,14 @@ namespace Simple.Consumer
 
 		public string Queue => "test.queue.v1";
 
-		public string Name => "";
+		public string Name => "v1";
 		public override ushort ThreadCount => 20;
 		public override ClientOption ClientOption => new ClientOption(Exchange, RoutingKey, ExchangeType, Queue, Name);
 
 		public override Task Invoke(Message<string> message)
 		{
-			Console.WriteLine(message.Body);
-			return Task.CompletedTask;
+			throw new Exception("错误测试");
+			//	return Task.CompletedTask;
 		}
 	}
 	public class SimpleSubscriber2 : ConsumerSubscriberBase<string>
