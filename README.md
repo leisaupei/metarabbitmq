@@ -68,7 +68,7 @@ public class SomeController : Controller
         {
             [Meta.RabbitMQ.Generic.Headers.Exchange] = "test.ex.v1", //交换机
             [Meta.RabbitMQ.Generic.Headers.RoutingKey] = "test.rk.v1", //路由key
-            [Meta.RabbitMQ.Generic.Headers.Name] = "", //配置中的Name
+            [Meta.RabbitMQ.Generic.Headers.Name] = "", //配置中的Name, 如果单一配置可忽略
             // ...
             //以上就是发送者必填参数, 更多参数见Meta.RabbitMQ.Generic.Headers
         };
@@ -94,7 +94,7 @@ public class SimpleSubscriber : ConsumerSubscriberBase<string>
     public string RoutingKey => "test.rk.v1"; //路由key
     public string ExchangeType => RabbitMQ.Client.ExchangeType.Direct; //交换机类型
     public string Queue => "test.queue.v1"; //订阅队列
-    public string Name => ""; //Startup.cs配置的Name
+    public string Name => ""; //Startup.cs配置的Name, 单一配置可忽略
     //开启线程数量, 当值为0时取全局配置, 默认为0
     public override ushort ThreadCount => 20;
     //同时订阅线程数, 0则无限制
