@@ -1,6 +1,8 @@
 
 # Meta.RabbitMQ介绍
 
+[![Meta.RabbitMQ on fuget.org](https://www.fuget.org/packages/Meta.RabbitMQ/badge.svg)](https://www.fuget.org/packages/Meta.RabbitMQ)
+
 * 基于.NetStandard 2.0的RabbitMQ的轻量级框架。
 * 适配集群，非集群多服务，多VirtualHost场景开发。
 * 内置连接池管理，只需要做好配置，无需入住大量RabbitMQ Producer。
