@@ -8,6 +8,7 @@
 * 内置连接池管理，只需要做好配置，无需注入大量RabbitMQ Producer。
 * 发送者、订阅者已抽象实现，直接继承或注入引用即可快速开发。
 * 支持RabbitMQ Header传输
+* 支持死信队列Expiration传入
 ---
 
 # 如何开始？
