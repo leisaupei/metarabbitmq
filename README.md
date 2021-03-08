@@ -5,16 +5,16 @@
 
 * 基于.NetStandard 2.0的RabbitMQ的轻量级框架。
 * 适配集群，非集群多服务，多VirtualHost场景开发。
-* 内置连接池管理，只需要做好配置，无需入住大量RabbitMQ Producer。
+* 内置连接池管理，只需要做好配置，无需注入大量RabbitMQ Producer。
 * 发送者、订阅者已抽象实现，直接继承或注入引用即可快速开发。
 * 支持RabbitMQ Header传输
 ---
 
 # 如何开始？
 
-* 引用Nuget包 Meta.RabbitMQ
+* 引用Nuget包 [Meta.RabbitMQ](https://www.nuget.org/packages/Meta.RabbitMQ)
 
-## 配置Procucer
+## 配置发送者Procucer
 ### Startup.cs
 ``` C#
 public void ConfigureServices(IServiceCollection services)
@@ -83,7 +83,7 @@ public class SomeController : Controller
 }
 ```
 ---
-## 配置Subscriber
+## 配置订阅者Subscriber
 ### Subscriber.cs
 
 ``` C#
