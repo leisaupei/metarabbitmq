@@ -1,18 +1,21 @@
 
 # Meta.RabbitMQ介绍
 
+[![Meta.RabbitMQ](https://img.shields.io/nuget/v/Meta.RabbitMQ.svg)](https://www.nuget.org/packages/Meta.RabbitMQ)
+
 * 基于.NetStandard 2.0的RabbitMQ的轻量级框架。
 * 适配集群，非集群多服务，多VirtualHost场景开发。
-* 内置连接池管理，只需要做好配置，无需入住大量RabbitMQ Producer。
+* 内置连接池管理，只需要做好配置，无需注入大量RabbitMQ Producer。
 * 发送者、订阅者已抽象实现，直接继承或注入引用即可快速开发。
 * 支持RabbitMQ Header传输
+* 支持死信队列Expiration传入
 ---
 
 # 如何开始？
 
-* 引用Nuget包 Meta.RabbitMQ
+* 引用Nuget包 [Meta.RabbitMQ](https://www.nuget.org/packages/Meta.RabbitMQ)
 
-## 配置Procucer
+## 配置发送者Procucer
 ### Startup.cs
 ``` C#
 public void ConfigureServices(IServiceCollection services)
@@ -68,7 +71,7 @@ public class SomeController : Controller
         {
             [Meta.RabbitMQ.Generic.Headers.Exchange] = "test.ex.v1", //交换机
             [Meta.RabbitMQ.Generic.Headers.RoutingKey] = "test.rk.v1", //路由key
-            [Meta.RabbitMQ.Generic.Headers.Name] = "", //配置中的Name
+            [Meta.RabbitMQ.Generic.Headers.Name] = "", //配置中的Name, 如果单一配置可忽略
             // ...
             //以上就是发送者必填参数, 更多参数见Meta.RabbitMQ.Generic.Headers
         };
@@ -81,7 +84,7 @@ public class SomeController : Controller
 }
 ```
 ---
-## 配置Subscriber
+## 配置订阅者Subscriber
 ### Subscriber.cs
 
 ``` C#
@@ -94,7 +97,7 @@ public class SimpleSubscriber : ConsumerSubscriberBase<string>
     public string RoutingKey => "test.rk.v1"; //路由key
     public string ExchangeType => RabbitMQ.Client.ExchangeType.Direct; //交换机类型
     public string Queue => "test.queue.v1"; //订阅队列
-    public string Name => ""; //Startup.cs配置的Name
+    public string Name => ""; //Startup.cs配置的Name, 单一配置可忽略
     //开启线程数量, 当值为0时取全局配置, 默认为0
     public override ushort ThreadCount => 20;
     //同时订阅线程数, 0则无限制
