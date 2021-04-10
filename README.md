@@ -147,14 +147,20 @@ public void ConfigureServices(IServiceCollection services)
 
 ## 自定义设置
 
-### Meta.RabbitMQ.Serialization.ISerializer.cs
+### Meta.RabbitMQ.Serialization.ISerializer
 * 默认序列化器使用Newtonsoft.Json UTF8格式序列化，如需自定义可重写此接口在注入服务前注入即可。
 * 建议发送者与订阅者使用同一个序列化器，否则会有协议问题
-* 详细可参考Meta.RabbitMQ.Serialization.DefaultSerializer
+* 详细可参考[Meta.RabbitMQ.Serialization.DefaultSerializer](/src/Meta.RabbitMQ/Serialization/DefaultSerializer.cs)
 ``` C#
 services.TryAddSingleton<ISerializer, CustomSerializer>();
 ```
-### Meta.RabbitMQ.Consumer.IConsumerReceivedFilter.cs
+### Meta.RabbitMQ.Consumer.IConsumerReceivedFilter
 * 提供了消费者的接收处理入口
 * 用于可自定义执行逻辑前和抛出异常后的逻辑处理
-* 详细可参考Meta.RabbitMQ.Serialization.ConsumerReceivedFilter
+* 详细可参考[Meta.RabbitMQ.Serialization.ConsumerReceivedFilter](/src/Meta.RabbitMQ/Consumer/ConsumerReceivedFilter.cs)
+``` C#
+services.AddRabbitMQConsumerHostedService(a =>
+{
+    a.ConsumerReceiveFilter<CustomReceivedFilter>();
+});
+```
